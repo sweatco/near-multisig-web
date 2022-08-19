@@ -1,46 +1,40 @@
-# Getting Started with Create React App
+# Getting Started with Multisig
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### How to Multisig (X/Y) existing account 
 
-## Available Scripts
+Using NEAR CLI run following command Y times with different PK_Y (Private Key of person who will confirm transactions), where `MULTISIG_ACCOUNT_ID.testnet` is the account you want to multisig:
 
-In the project directory, you can run:
+```sh
+near add-key MULTISIG_ACCOUNT_ID.testnet PK_Y --contract-id MULTISIG_ACCOUNT_ID.testnet --method-names "add_request" "add_request_and_confirm" "delete_request" "confirm"
+```
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Clone https://github.com/near/core-contracts and run following command, where X — number of confirmations, should be equal or less then Y:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```sh
+cd core-contracts/multisig
+near deploy --accountId MULTISIG_ACCOUNT_ID.testnet --wasmFile res/multisig.wasm --initFunction new --initArgs '{"num_confirmations": X}'
+```
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Verify that the account has correct set of keys:
 
-### `npm run build`
+```sh
+near keys MULTISIG_ACCOUNT_ID.testnet
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Delete all account's FullAccess keys:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+near delete-key MULTISIG_ACCOUNT_ID.testnet FULL_ACCESS_PK
+```
 
-### `npm run eject`
+### How to send request
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "receiver.testnet", "actions": [{"type": "Transfer", "amount": "1000000000000000000000000"}]}}'
+```

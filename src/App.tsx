@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Box, Button } from '@mui/material'
 
-function App() {
+import AddContractDialog from './components/AddContractDialog'
+import createAppComponent from './utils/createAppComponent'
+import { contractsActions } from './reducers/contracts/reducer'
+import { useAppDispatch, useAppSelector } from './hooks/useApp'
+import { contractSelectors } from './reducers/contracts'
+import Contract from './components/Contract'
+import { useDialog } from './hooks/useDialog'
+import GenerateKeyDialog from './components/GenerateKeyDialog'
+
+const App = createAppComponent(() => {
+  const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
+  const { open: keyOpen, openDialog: openKeyDialog, closeDialog: closeKeyDialog } = useDialog(handleDialogResult)
+  const dispatch = useAppDispatch()
+  const contracts = useAppSelector(contractSelectors.getContracts)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <>
+      <Box sx={{ p: 2 }}>
+        <Button onClick={openDialog}>Add multisig contract</Button>
+        <Button onClick={openKeyDialog}>Generate Key</Button>
+        {contracts.map((contract) => (
+          <Contract name={contract} key={contract} />
+        ))}
+      </Box>
+      <AddContractDialog open={open} onClose={closeDialog} />
+      <GenerateKeyDialog open={keyOpen} onClose={closeKeyDialog} />
+    </>
+  )
 
-export default App;
+  function handleDialogResult(result: string) {
+    dispatch(contractsActions.addContract(result))
+  }
+})
+
+export default App
