@@ -4,14 +4,6 @@ import { parseSeedPhrase } from 'near-seed-phrase'
 import { getContract } from '../utils/MultiSigContract'
 import { TestNet } from '../utils/networks'
 
-// khmelev.testnet/ed25519:3v12yPRBfszUMGYpLugcBupnJnkhhacvARWjYB599XKrKt5LiVJhzLRR4FGTLw9MuRHzrVdTcbR24NavNWVzU5xd
-
-// {
-//   seedPhrase: "elbow notable pretty begin visual vibrant broken traffic arena praise during auction",
-//   secretKey: "ed25519:2SDRhhjK57gtMKpUehbe7C5LdsnjDfBrdv6ePeBtKJ5RdeLaNLQnaoPEJGSnjbNkFDzHWkcxfMdxC7NU8DsFJnMA",
-//   publicKey: "ed25519:4itoFe9TuzzKYAQquEkP6dhrfT1Tg5NjVUaTPZM1kPyn"
-// }
-
 const useSignRequest = (contractId: string, requestId: number) => {
   return sign
 
