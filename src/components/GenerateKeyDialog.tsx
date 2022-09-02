@@ -1,19 +1,8 @@
-import {
-  Button,
-  Box,
-  Card,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Stack,
-  Icon,
-  IconButton,
-} from '@mui/material'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { generateSeedPhrase } from 'near-seed-phrase'
-import ClipboardJS from 'clipboard'
+import { Button, Dialog, DialogActions, Icon, Tabs, Tab } from '@mui/material'
+import React, { useState } from 'react'
+import GenerateSeedPhrase from './GenerateSeedPhrase'
+import LedgerPublicKey from './LedgerPublicKey'
+import TabPanel from './TabPanel'
 
 interface GenerateKeyDialogProps {
   open: boolean
@@ -22,73 +11,21 @@ interface GenerateKeyDialogProps {
 
 const GenerateKeyDialog: React.FC<GenerateKeyDialogProps> = (props) => {
   const [seedIndex, setSeedIndex] = useState(0)
-  const seed = useMemo(() => generateSeedPhrase(), [seedIndex])
-
-  const seedClipboardRef = useRef<ClipboardJS>()
-  const copySeedButtonRef = useCallback(
-    (node: HTMLButtonElement) => {
-      if (seedClipboardRef.current) {
-        seedClipboardRef.current.destroy()
-        seedClipboardRef.current = undefined
-      }
-
-      if (node !== null) {
-        seedClipboardRef.current = new ClipboardJS(node, { text: () => seed.seedPhrase })
-      }
-    },
-    [seed]
-  )
-
-  const keyClipboardRef = useRef<ClipboardJS>()
-  const copyKeyButtonRef = useCallback(
-    (node: HTMLButtonElement) => {
-      if (keyClipboardRef.current) {
-        keyClipboardRef.current.destroy()
-        keyClipboardRef.current = undefined
-      }
-
-      if (node !== null) {
-        keyClipboardRef.current = new ClipboardJS(node, { text: () => seed.publicKey })
-      }
-    },
-    [seed]
-  )
+  const [tab, setTab] = useState(0)
 
   return (
-    <Dialog open={props.open} onClose={handleCancel}>
+    <Dialog id="generate-key-dialog" open={props.open} maxWidth="sm" fullWidth={true} onClose={handleCancel}>
       <form>
-        <DialogTitle>New Key</DialogTitle>
-
-        <DialogContent>
-          <Stack spacing={2}>
-            <Box>
-              <DialogContentText>Copy and securely store new Seed Phrase:</DialogContentText>
-              <Card variant="outlined">
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box sx={{ p: 2, fontFamily: 'monospace' }}>{seed.seedPhrase}</Box>
-                  <IconButton ref={copySeedButtonRef}>
-                    <Icon fontSize="small" color="secondary" className="material-symbols-outlined">
-                      content_copy
-                    </Icon>
-                  </IconButton>
-                </Stack>
-              </Card>
-            </Box>
-            <Box>
-              <DialogContentText>Copy and send Public Key to Multisig Manager:</DialogContentText>
-              <Card variant="outlined">
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box sx={{ p: 2, fontFamily: 'monospace' }}>{seed.publicKey}</Box>
-                  <IconButton ref={copyKeyButtonRef}>
-                    <Icon fontSize="small" color="secondary" className="material-symbols-outlined">
-                      content_copy
-                    </Icon>
-                  </IconButton>
-                </Stack>
-              </Card>
-            </Box>
-          </Stack>
-        </DialogContent>
+        <Tabs value={tab} centered onChange={handleTabChange}>
+          <Tab label="Seed Phrase" />
+          <Tab label="Ledger" />
+        </Tabs>
+        <TabPanel value={tab} index={0}>
+          <GenerateSeedPhrase seedIndex={seedIndex} />
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          <LedgerPublicKey />
+        </TabPanel>
         <DialogActions>
           <Button
             color="secondary"
@@ -114,6 +51,10 @@ const GenerateKeyDialog: React.FC<GenerateKeyDialogProps> = (props) => {
 
   function handleRefreshSeed() {
     setSeedIndex(seedIndex + 1)
+  }
+
+  function handleTabChange(_: any, newValue: number) {
+    setTab(newValue)
   }
 }
 
