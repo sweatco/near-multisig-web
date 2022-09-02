@@ -36,5 +36,5 @@ near delete-key MULTISIG_ACCOUNT_ID.testnet FULL_ACCESS_PK
 ### How to send request
 
 ```
-near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "receiver.testnet", "actions": [{"type": "Transfer", "amount": "1000000000000000000000000"}]}}'
+near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "receiver.testnet", "actions": [{"type": "Transfer", "amount": "1000000000000000000000000"}]}} --accountId MULTISIG_ACCOUNT_ID.testnet'
 ```
