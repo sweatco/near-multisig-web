@@ -23,7 +23,7 @@ const AddContractDialog: React.FC<AddContractDialogProps> = (props) => {
         <DialogContent>
           <DialogContentText>To add MultiSig contract, please enter its full on-chain address</DialogContentText>
           <TextField
-            ref={inputRef}
+            inputRef={inputRef}
             margin="dense"
             label="Contract Address"
             type="text"
@@ -53,8 +53,7 @@ const AddContractDialog: React.FC<AddContractDialogProps> = (props) => {
 
   function handleAnimationEnd() {
     if (inputRef.current != null) {
-      const textInput = inputRef.current.getElementsByTagName('input')[0]
-      textInput.focus()
+      inputRef.current.focus()
     }
   }
 

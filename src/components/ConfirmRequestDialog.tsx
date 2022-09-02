@@ -40,7 +40,7 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
           <DialogContent>
             <DialogContentText>To confirm request, please enter Seed Phrase or Private Key</DialogContentText>
             <TextField
-              ref={inputRef}
+              inputRef={inputRef}
               margin="dense"
               label="Seed Phrase or Private Key"
               type="text"
@@ -75,8 +75,7 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
 
   function handleAnimationEnd() {
     if (inputRef.current != null) {
-      const textInput = inputRef.current.getElementsByTagName('input')[0]
-      textInput.focus()
+      inputRef.current.focus()
     }
   }
 
