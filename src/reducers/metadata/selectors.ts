@@ -31,3 +31,11 @@ export const getFailed = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
   return metadata && 'failed' in metadata
 }
+
+export const getInvalidated = (state: RootState, contractId: string) => {
+  const metadata = getMetadata(state, contractId)
+  if (metadata && 'invalidated' in metadata) {
+    return metadata.invalidated
+  }
+  return false
+}

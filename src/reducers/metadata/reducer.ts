@@ -1,13 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AccountBalance } from 'near-api-js/lib/account'
+import confirmRequest from '../../actions/chain/confirmRequest'
+import fetchContract from '../../actions/chain/fetchContract'
 
-export interface Metadata {
+interface InvalidatedMetadata {
+  invalidated?: boolean
+}
+
+export interface Metadata extends InvalidatedMetadata {
   num_confirmations: number
   balance: AccountBalance
   request_ids: number[]
 }
 
-export interface MetadataFailed {
+export interface MetadataFailed extends InvalidatedMetadata {
   failed: true
 }
 
@@ -24,6 +30,19 @@ export const metadataSlice = createSlice({
     setMetadata(state, action: PayloadAction<{ contractId: string; metadata: Metadata | MetadataFailed }>) {
       state.metadata[action.payload.contractId] = action.payload.metadata
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContract.fulfilled, (state, action) => {
+        state.metadata[action.meta.arg] = action.payload
+      })
+      .addCase(fetchContract.rejected, (state, action) => {
+        state.metadata[action.meta.arg] = { failed: true }
+      })
+      .addCase(confirmRequest.fulfilled, (state, action) => {
+        const { contractId } = action.meta.arg
+        state.metadata[contractId].invalidated = true
+      })
   },
 })
 

@@ -1,6 +1,7 @@
 import { configureStore as toolkitConfigureStore } from '@reduxjs/toolkit'
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
+import confirmRequest from '../actions/chain/confirmRequest'
 
 import rootReducer from '../reducers'
 
@@ -20,7 +21,7 @@ const configureStore = () => {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, confirmRequest.rejected.type],
         },
       }),
   })

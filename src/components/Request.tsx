@@ -14,7 +14,6 @@ interface RequestProps {
 const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   const { request, confirmations } = useRequest(contractId, requestId)
   const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
-  // const [open, setOpen] = useState(false)
   const [result, setResult] = useState<boolean | string>()
   const [resultVisible, setResultVisible] = useState(false)
   return (

@@ -10,7 +10,8 @@ import {
   TextField,
 } from '@mui/material'
 import React, { FormEvent, useEffect, useState } from 'react'
-import useSignRequest from '../hooks/useSignRequest'
+import confirmRequest from '../actions/chain/confirmRequest'
+import { useAppDispatch } from '../hooks/useApp'
 
 interface ConfirmRequestDialogProps {
   contractId: string
@@ -20,9 +21,9 @@ interface ConfirmRequestDialogProps {
 }
 
 const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClose, contractId, requestId }) => {
+  const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
   const [key, setKey] = useState('')
-  const sign = useSignRequest(contractId, requestId)
 
   useEffect(() => {
     if (open) {
@@ -76,8 +77,11 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
     setLoading(true)
 
     try {
-      const result = await sign(key)
-      onClose(result)
+      const result = await dispatch(confirmRequest({ key, contractId, requestId }))
+      if (result.type === confirmRequest.rejected.type) {
+        throw result.payload
+      }
+      onClose(typeof result.payload === 'string' ? true : result.payload)
     } catch (error: any) {
       onClose(error)
     } finally {
