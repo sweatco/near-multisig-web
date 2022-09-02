@@ -9,7 +9,7 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState, useRef } from 'react'
 import confirmRequest from '../actions/chain/confirmRequest'
 import { useAppDispatch } from '../hooks/useApp'
 
@@ -24,6 +24,7 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
   const [key, setKey] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (open) {
@@ -33,13 +34,13 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose} disableRestoreFocus>
+      <Dialog open={open} onClose={handleClose} onAnimationEnd={handleAnimationEnd}>
         <form onSubmit={handleSubmit}>
           <DialogTitle>Confirm Request</DialogTitle>
           <DialogContent>
             <DialogContentText>To confirm request, please enter Seed Phrase or Private Key</DialogContentText>
             <TextField
-              autoFocus
+              ref={inputRef}
               margin="dense"
               label="Seed Phrase or Private Key"
               type="text"
@@ -70,6 +71,13 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
 
   function handleClose() {
     onClose()
+  }
+
+  function handleAnimationEnd() {
+    if (inputRef.current != null) {
+      const textInput = inputRef.current.getElementsByTagName('input')[0]
+      textInput.focus()
+    }
   }
 
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
