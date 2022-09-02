@@ -55,7 +55,7 @@ const GenerateKeyDialog: React.FC<GenerateKeyDialogProps> = (props) => {
   )
 
   return (
-    <Dialog open={props.open} onClose={handleCancel}>
+    <Dialog open={props.open} onClose={handleCancel} disableRestoreFocus>
       <form>
         <DialogTitle>New Key</DialogTitle>
 

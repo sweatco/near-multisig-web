@@ -16,7 +16,7 @@ const AddContractDialog: React.FC<AddContractDialogProps> = (props) => {
   }, [props.open])
 
   return (
-    <Dialog open={props.open} onClose={handleCancel}>
+    <Dialog open={props.open} onClose={handleCancel} disableRestoreFocus>
       <form onSubmit={handleClose}>
         <DialogTitle>Add MultiSig Contract</DialogTitle>
         <DialogContent>

@@ -33,7 +33,7 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} disableRestoreFocus>
         <form onSubmit={handleSubmit}>
           <DialogTitle>Confirm Request</DialogTitle>
           <DialogContent>
