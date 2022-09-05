@@ -6,7 +6,8 @@ const RequestsTable: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>Pending Requests</TableCell>
+          <TableCell size="small">ID</TableCell>
+          <TableCell>Request Action</TableCell>
           <TableCell size="small">Receiver</TableCell>
           <TableCell align="right" size="small">
             Confirmations

@@ -19,6 +19,7 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   return (
     <>
       <TableRow>
+        <TableCell>{requestId}</TableCell>
         <TableCell>
           {request?.actions.map((action, index) => (
             <RequestAction key={index} action={action} />
