@@ -1,4 +1,14 @@
-import { Card, DialogContent, DialogContentText, DialogTitle, Icon, IconButton, Stack } from '@mui/material'
+import {
+  Card,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Icon,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  Stack,
+} from '@mui/material'
 import { Box } from '@mui/system'
 import ClipboardJS from 'clipboard'
 import { useEffect, useRef, useState } from 'react'
@@ -35,17 +45,24 @@ const LedgerPublicKey = () => {
         <Stack spacing={2}>
           <Box>
             <DialogContentText>Copy and send Public Key to Multisig Manager:</DialogContentText>
-            <Card variant="outlined">
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box sx={{ p: 2, fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {pk ?? message}
-                </Box>
-                <IconButton onClick={handleCopyClick}>
-                  <Icon fontSize="small" color="secondary" className="material-symbols-outlined">
-                    content_copy
-                  </Icon>
-                </IconButton>
-              </Stack>
+            <Card elevation={0}>
+              <OutlinedInput
+                disabled
+                fullWidth
+                multiline
+                maxRows={4}
+                value={pk ?? message}
+                sx={{ fontFamily: 'monospace' }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleCopyClick}>
+                      <Icon fontSize="small" color="secondary" className="material-symbols-outlined">
+                        content_copy
+                      </Icon>
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
             </Card>
           </Box>
         </Stack>
