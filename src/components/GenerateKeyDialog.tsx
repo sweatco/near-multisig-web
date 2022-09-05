@@ -27,16 +27,18 @@ const GenerateKeyDialog: React.FC<GenerateKeyDialogProps> = (props) => {
           <LedgerPublicKey />
         </TabPanel>
         <DialogActions>
-          <Button
-            color="secondary"
-            onClick={handleRefreshSeed}
-            startIcon={
-              <Icon fontSize="small" className="material-symbols-outlined">
-                refresh
-              </Icon>
-            }>
-            Refresh
-          </Button>
+          {tab === 0 ? (
+            <Button
+              color="secondary"
+              onClick={handleRefreshSeed}
+              startIcon={
+                <Icon fontSize="small" className="material-symbols-outlined">
+                  refresh
+                </Icon>
+              }>
+              Refresh
+            </Button>
+          ) : null}
 
           <Button onClick={handleCancel}>Close</Button>
         </DialogActions>
