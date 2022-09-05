@@ -34,7 +34,12 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose} onAnimationEnd={handleAnimationEnd}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        TransitionProps={{
+          onEntered: handleDialogEnter,
+        }}>
         <form onSubmit={handleSubmit}>
           <DialogTitle>Confirm Request</DialogTitle>
           <DialogContent>
@@ -73,7 +78,7 @@ const ConfirmRequestDialog: React.FC<ConfirmRequestDialogProps> = ({ open, onClo
     onClose()
   }
 
-  function handleAnimationEnd() {
+  function handleDialogEnter() {
     if (inputRef.current != null) {
       inputRef.current.focus()
     }

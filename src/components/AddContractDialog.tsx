@@ -17,7 +17,12 @@ const AddContractDialog: React.FC<AddContractDialogProps> = (props) => {
   }, [props.open])
 
   return (
-    <Dialog open={props.open} onClose={handleCancel} onAnimationEnd={handleAnimationEnd}>
+    <Dialog
+      open={props.open}
+      onClose={handleCancel}
+      TransitionProps={{
+        onEntered: handleDialogEnter,
+      }}>
       <form onSubmit={handleClose}>
         <DialogTitle>Add MultiSig Contract</DialogTitle>
         <DialogContent>
@@ -51,7 +56,7 @@ const AddContractDialog: React.FC<AddContractDialogProps> = (props) => {
     props.onClose()
   }
 
-  function handleAnimationEnd() {
+  function handleDialogEnter() {
     if (inputRef.current != null) {
       inputRef.current.focus()
     }
