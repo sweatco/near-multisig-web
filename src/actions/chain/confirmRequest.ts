@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
 import { parseSeedPhrase } from 'near-seed-phrase'
 
-import { TestNet } from '../../utils/networks'
+import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/MultiSigContract'
 
 interface ConfirmRequestArgs {
@@ -22,10 +22,10 @@ const confirmRequest = createAsyncThunk<
 >('chain/confirmRequest', async ({ key, contractId, requestId }, { rejectWithValue }) => {
   const keyStore = new nearAPI.keyStores.InMemoryKeyStore()
   const { keyPair, accountId = contractId } = parseKey(key)
-  keyStore.setKey(TestNet.networkId, accountId, keyPair)
+  keyStore.setKey(DefaultNet.networkId, accountId, keyPair)
 
   try {
-    const near = await nearAPI.connect({ ...TestNet, keyStore })
+    const near = await nearAPI.connect({ ...DefaultNet, keyStore })
     const account = await near.account(accountId)
     const contract = getContract(account, contractId)
 

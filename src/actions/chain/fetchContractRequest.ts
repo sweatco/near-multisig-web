@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
 
-import { TestNet } from '../../utils/networks'
+import { DefaultNet } from '../../utils/networks'
 import { getContract, MultiSigRequest } from '../../utils/MultiSigContract'
 
 interface FetchContractRequestArgs {
@@ -21,7 +21,7 @@ const fetchContractRequest = createAsyncThunk<
     rejectValue: Error
   }
 >('chain/fetchContractRequest', async ({ contractId, requestId }, { rejectWithValue }) => {
-  const near = await nearAPI.connect(TestNet)
+  const near = await nearAPI.connect(DefaultNet)
   const account = await near.account(contractId)
   const contract = getContract(account, contractId)
 

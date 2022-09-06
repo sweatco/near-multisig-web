@@ -19,3 +19,5 @@ export const MainNet: ConnectConfig = {
   helperUrl: 'https://helper.mainnet.near.org',
   headers: {},
 }
+
+export const DefaultNet = process.env.NODE_ENV === 'production' ? MainNet : TestNet
