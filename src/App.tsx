@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Box, Button } from '@mui/material'
 
 import AddContractDialog from './components/AddContractDialog'
@@ -14,14 +14,31 @@ const App = createAppComponent(() => {
   const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
   const { open: keyOpen, openDialog: openKeyDialog, closeDialog: closeKeyDialog } = useDialog(handleDialogResult)
   const dispatch = useAppDispatch()
+
   const contracts = useAppSelector(contractSelectors.getContracts)
+  const contractIdFromHash = window.location.hash?.slice(1)
+  const sortedContracts = useMemo(() => {
+    if (contractIdFromHash && contractIdFromHash.length > 0) {
+      const contractIndex = contracts.indexOf(contractIdFromHash)
+      if (contractIndex !== -1) {
+        return [contractIdFromHash].concat(contracts.filter((id) => id !== contractIdFromHash))
+      }
+    }
+    return contracts
+  }, [contracts, contractIdFromHash])
+
+  useEffect(() => {
+    if (contractIdFromHash && contractIdFromHash.length > 0) {
+      dispatch(contractsActions.addContract(contractIdFromHash))
+    }
+  }, [dispatch, contractIdFromHash])
 
   return (
     <>
       <Box sx={{ p: 2 }}>
         <Button onClick={openDialog}>Add multisig contract</Button>
         <Button onClick={openKeyDialog}>Generate Key</Button>
-        {contracts.map((contract) => (
+        {sortedContracts.map((contract) => (
           <Contract name={contract} key={contract} />
         ))}
       </Box>
