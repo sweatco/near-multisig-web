@@ -62,7 +62,7 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
             <DialogContentText>Copy and send Public Key to Multisig Manager:</DialogContentText>
             <Card elevation={0}>
               <OutlinedInput
-                disabled
+                readOnly
                 fullWidth
                 multiline
                 maxRows={4}

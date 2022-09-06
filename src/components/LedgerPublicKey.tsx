@@ -17,7 +17,7 @@ import { ledgerManager } from '../utils/LedgerManager'
 const LedgerPublicKey = () => {
   const dialogContentRef = useRef()
   const [pk, setPk] = useState<string>()
-  const [message, setMessage] = useState("Follow Ledger's on-screen instructions...")
+  const [message, setMessage] = useState<string>()
 
   useEffect(() => {
     async function getData() {
@@ -47,11 +47,12 @@ const LedgerPublicKey = () => {
             <DialogContentText>Copy and send Public Key to Multisig Manager:</DialogContentText>
             <Card elevation={0}>
               <OutlinedInput
-                disabled
+                readOnly
                 fullWidth
                 multiline
+                error={message !== undefined}
                 maxRows={4}
-                value={pk ?? message}
+                value={pk ?? message ?? "Follow Ledger's on-screen instructions..."}
                 sx={{ fontFamily: 'monospace' }}
                 endAdornment={
                   <InputAdornment position="end">
