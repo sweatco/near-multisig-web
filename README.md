@@ -29,12 +29,22 @@ near keys MULTISIG_ACCOUNT_ID.testnet
 
 Delete all account's FullAccess keys:
 
-```
+```sh
 near delete-key MULTISIG_ACCOUNT_ID.testnet FULL_ACCESS_PK
 ```
 
 ### How to send request
 
-```
+```sh
 near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "receiver.testnet", "actions": [{"type": "Transfer", "amount": "1000000000000000000000000"}]}} --accountId MULTISIG_ACCOUNT_ID.testnet'
+```
+
+### How to add/delete keys
+
+```sh
+near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "MULTISIG_ACCOUNT_ID.testnet", "actions": [{"type": "AddKey", "public_key": "PK", "permission": { "allowance": null, "method_names": [ "add_request", "add_request_and_confirm", "delete_request", "confirm" ], "receiver_id": "MULTISIG_ACCOUNT_ID.testnet" }}]}}' --accountId MULTISIG_ACCOUNT_ID.testnet
+
+near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "MULTISIG_ACCOUNT_ID.testnet", "actions": [{"type": "DeleteKey", "public_key": "PK"}]}}' --accountId MULTISIG_ACCOUNT_ID.testnet
+
+near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "MULTISIG_ACCOUNT_ID.testnet", "actions": [{"type": "AddKey", "public_key": "PK"}]}}' --accountId MULTISIG_ACCOUNT_ID.testnet
 ```
