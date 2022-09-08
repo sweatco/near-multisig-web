@@ -25,6 +25,9 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
   const seed = useMemo(() => generateSeedPhrase(), [props.seedIndex])
   const parsedSeed = useMemo(() => (manualSeed ? parseSeedPhrase(manualSeed) : undefined), [manualSeed])
 
+  const seedPhrase = manualSeed ?? seed.seedPhrase
+  const publicKey = parsedSeed?.publicKey ?? seed.publicKey
+
   useEffect(() => {
     setManualSeed(null)
   }, [props.seedIndex])
@@ -42,7 +45,7 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
                 multiline
                 maxRows={4}
                 minRows={2}
-                value={manualSeed ?? seed.seedPhrase}
+                value={seedPhrase}
                 sx={{ fontFamily: 'monospace' }}
                 onBlur={handleBlur}
                 onChange={handleSeedPhraseChange}
@@ -66,7 +69,7 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
                 fullWidth
                 multiline
                 maxRows={4}
-                value={parsedSeed?.publicKey ?? seed.publicKey}
+                value={publicKey}
                 sx={{ fontFamily: 'monospace' }}
                 endAdornment={
                   <InputAdornment position="end">
@@ -96,11 +99,11 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
   }
 
   function handleSeedPhraseCopy(event: any) {
-    ClipboardJS.copy(seed.seedPhrase, { container: dialogContentRef.current })
+    ClipboardJS.copy(seedPhrase, { container: dialogContentRef.current })
   }
 
   function handlePublicKeyCopy(event: any) {
-    ClipboardJS.copy(seed.publicKey, { container: dialogContentRef.current })
+    ClipboardJS.copy(publicKey, { container: dialogContentRef.current })
   }
 }
 
