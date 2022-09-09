@@ -48,3 +48,9 @@ near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "
 
 near call MULTISIG_ACCOUNT_ID.testnet add_request '{"request": {"receiver_id": "MULTISIG_ACCOUNT_ID.testnet", "actions": [{"type": "AddKey", "public_key": "PK"}]}}' --accountId MULTISIG_ACCOUNT_ID.testnet
 ```
+
+### How to send FT token
+
+```sh
+near call MULTISIG_ACCOUNT_ID.testnet add_request_and_confirm '{"request": {"receiver_id": "FT_TOKEN.testnet", "actions": [{"type": "FunctionCall", "gas": "30000000000000", "method_name": "storage_deposit", "args": "eyJhY2NvdW50X2lkIjoiUkVDRUlWRVIudGVzdG5ldCIsInJlZ2lzdHJhdGlvbl9vbmx5Ijp0cnVlfQ==", "deposit": "1250000000000000000000" }, {"type": "FunctionCall", "gas": "15000000000000", "method_name": "ft_transfer", "args": "eyJhbW91bnQiOiIxMDAwMDAwMDAwMDAwMDAwMDAwIiwicmVjZWl2ZXJfaWQiOiJSRUNFSVZFUi50ZXN0bmV0In0=", "deposit": "1" }]}}' --gas=100000000000000 --accountId MULTISIG_ACCOUNT_ID.testnet
+```
