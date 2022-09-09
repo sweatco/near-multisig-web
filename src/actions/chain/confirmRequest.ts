@@ -29,7 +29,7 @@ const confirmRequest = createAsyncThunk<
     const account = await near.account(accountId)
     const contract = getContract(account, contractId)
 
-    return await contract.confirm({ request_id: requestId })
+    return await contract.confirm({ request_id: requestId }, '250000000000000')
   } catch (err) {
     return rejectWithValue(err as Error)
   }

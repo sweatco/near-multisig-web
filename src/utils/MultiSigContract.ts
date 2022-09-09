@@ -23,7 +23,7 @@ export interface MultiSigContract extends Contract {
   add_request(options: { request: MultiSigRequest }): Promise<RequestId>
   add_request_and_confirm(options: { request: MultiSigRequest }): Promise<RequestId>
   delete_request(options: { request_id: RequestId }): void
-  confirm(options: { request_id: RequestId }): Promise<boolean | string>
+  confirm(options: { request_id: RequestId }, gas?: string, deposit?: string): Promise<boolean | string>
 }
 
 const CONTRACT_METHODS = {
