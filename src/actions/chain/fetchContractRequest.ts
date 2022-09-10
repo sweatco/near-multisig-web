@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
 
 import { DefaultNet } from '../../utils/networks'
-import { getContract, MultiSigRequest } from '../../utils/MultiSigContract'
+import { getContract, MultiSigRequest } from '../../utils/contracts/MultiSig'
 
 interface FetchContractRequestArgs {
   contractId: string

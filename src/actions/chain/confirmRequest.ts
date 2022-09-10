@@ -3,7 +3,7 @@ import * as nearAPI from 'near-api-js'
 import { parseSeedPhrase } from 'near-seed-phrase'
 
 import { DefaultNet } from '../../utils/networks'
-import { getContract } from '../../utils/MultiSigContract'
+import { getContract } from '../../utils/contracts/MultiSig'
 
 interface ConfirmRequestArgs {
   key: string

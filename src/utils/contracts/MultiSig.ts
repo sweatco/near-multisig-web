@@ -10,7 +10,7 @@ export interface MultiSigRequest {
   actions: MultiSigRequestAction[]
 }
 
-export interface MultiSigContract extends Contract {
+export interface MultiSig extends Contract {
   // View Method
   get_request(options: { request_id: RequestId }): Promise<MultiSigRequest>
   get_num_requests_pk(options: { public_key: Base58PublicKey }): Promise<number>
@@ -39,5 +39,5 @@ const CONTRACT_METHODS = {
 }
 
 export const getContract = (account: Account, contractId: string) => {
-  return new Contract(account, contractId, CONTRACT_METHODS) as MultiSigContract
+  return new Contract(account, contractId, CONTRACT_METHODS) as MultiSig
 }

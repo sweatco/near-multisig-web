@@ -3,7 +3,7 @@ import * as nearAPI from 'near-api-js'
 import { AccountBalance } from 'near-api-js/lib/account'
 
 import { DefaultNet } from '../../utils/networks'
-import { getContract } from '../../utils/MultiSigContract'
+import { getContract } from '../../utils/contracts/MultiSig'
 
 interface FetchContractResult {
   balance: AccountBalance

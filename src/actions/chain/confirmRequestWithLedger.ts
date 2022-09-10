@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
 
 import { DefaultNet } from '../../utils/networks'
-import { getContract } from '../../utils/MultiSigContract'
+import { getContract } from '../../utils/contracts/MultiSig'
 import { LedgerSigner } from '../../utils/LedgerSigner'
 import LedgerManager from '../../utils/LedgerManager'
 

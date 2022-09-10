@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import confirmRequest from '../../actions/chain/confirmRequest'
 import fetchContractRequest from '../../actions/chain/fetchContractRequest'
-import { MultiSigRequest } from '../../utils/MultiSigContract'
+import { MultiSigRequest } from '../../utils/contracts/MultiSig'
 
 interface InvalidatedMultiSigRequest extends MultiSigRequest {
   invalidated?: boolean
