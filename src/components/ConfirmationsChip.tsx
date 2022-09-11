@@ -8,7 +8,7 @@ interface ConfirmationsChipProps {
 
 const ConfirmationsChip: React.FC<ConfirmationsChipProps> = ({ confirmations }) => {
   return (
-    <ChipSkeleton isLoading={confirmations === undefined} sx={{ marginLeft: 1 }}>
+    <ChipSkeleton isLoading={confirmations === undefined}>
       <Chip
         icon={
           <Icon fontSize="inherit" className="material-symbols-outlined">

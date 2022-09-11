@@ -71,8 +71,6 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
       return <FungibleTokenChip tokenId={receiverId} />
     } else if (receiverId) {
       return `@${receiverId}`
-    } else {
-      return '-'
     }
   }
 
