@@ -1,9 +1,13 @@
-import { Alert, Button, Snackbar, TableCell, TableRow } from '@mui/material'
 import React, { memo, useState } from 'react'
+import { Alert, Button, Snackbar, Stack, TableCell, TableRow } from '@mui/material'
+import { useAppSelector } from '../hooks/useApp'
 import { useDialog } from '../hooks/useDialog'
 
 import useRequest from '../hooks/useRequest'
+import { metadataSelectors } from '../reducers/metadata'
+import { isFungibleTokenRequest } from '../utils/contracts/MultiSig'
 import ConfirmRequestDialog from './ConfirmRequestDialog'
+import FungibleTokenChip from './FungibleTokenChip'
 import RequestAction from './RequestAction'
 
 interface RequestProps {
@@ -12,21 +16,29 @@ interface RequestProps {
 }
 
 const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
+  const contractConfirmations = useAppSelector((state) => metadataSelectors.getNumConfirmations(state, contractId))
+
   const { request, confirmations } = useRequest(contractId, requestId)
   const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
   const [result, setResult] = useState<boolean | string>()
   const [resultVisible, setResultVisible] = useState(false)
+
+  const isFungibleToken = request ? isFungibleTokenRequest(request) : false
+  const receiverId = request?.receiver_id
+
   return (
     <>
       <TableRow>
         <TableCell>{requestId}</TableCell>
         <TableCell>
-          {request?.actions.map((action, index) => (
-            <RequestAction key={index} action={action} />
-          ))}
+          <Stack direction="row" spacing={1}>
+            {request?.actions.map((action, index) => (
+              <RequestAction key={index} action={action} receiverId={request.receiver_id} />
+            ))}
+          </Stack>
         </TableCell>
-        <TableCell>{request ? `@${request.receiver_id}` : '-'}</TableCell>
-        <TableCell align="right">{confirmations?.length ?? '-'}</TableCell>
+        <TableCell>{renderReceiverId()}</TableCell>
+        <TableCell align="right">{confirmations ? `${confirmations.length}/${contractConfirmations}` : '-'}</TableCell>
         <TableCell align="right">
           <Button variant="contained" color="success" onClick={handleConfirm} disabled={request === undefined}>
             Confirm
@@ -53,6 +65,16 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
       </TableRow>
     </>
   )
+
+  function renderReceiverId() {
+    if (isFungibleToken && receiverId) {
+      return <FungibleTokenChip tokenId={receiverId} />
+    } else if (receiverId) {
+      return `@${receiverId}`
+    } else {
+      return '-'
+    }
+  }
 
   function handleConfirm() {
     openDialog()

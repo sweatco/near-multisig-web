@@ -41,3 +41,12 @@ const CONTRACT_METHODS = {
 export const getContract = (account: Account, contractId: string) => {
   return new Contract(account, contractId, CONTRACT_METHODS) as MultiSig
 }
+
+export const isFungibleTokenRequest = (request: MultiSigRequest) => {
+  for (const action of request.actions) {
+    if (action.type === 'FunctionCall' && action.method_name === 'ft_transfer') {
+      return true
+    }
+  }
+  return false
+}

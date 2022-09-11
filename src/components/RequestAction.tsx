@@ -4,6 +4,7 @@ import * as nearAPI from 'near-api-js'
 
 interface RequestActionProps {
   action: any
+  receiverId: string
 }
 
 const RequestAction: React.FC<RequestActionProps> = ({ action }) => {
