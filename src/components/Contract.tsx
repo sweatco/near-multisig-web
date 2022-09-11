@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Divider, Paper, Typography } from '@mui/material'
+import { Alert, Box, Button, Divider, Icon, IconButton, Paper, Stack, Typography } from '@mui/material'
 import React, { memo } from 'react'
 
 import useContract from '../hooks/useContract'
@@ -15,9 +15,18 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
   const { confirmations, failed, remove, requestIds } = useContract(name)
   return (
     <Paper sx={{ p: 3, marginTop: 2 }}>
-      <Typography variant="h5" gutterBottom sx={{ flex: 1 }}>
-        @{name}
-      </Typography>
+      <Stack direction="row">
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h5" gutterBottom sx={{ flex: 1 }}>
+            @{name}
+          </Typography>
+        </Box>
+        <IconButton color="error" onClick={remove}>
+          <Icon fontSize="inherit" className="material-symbols-outlined">
+            delete
+          </Icon>
+        </IconButton>
+      </Stack>
 
       {failed ? (
         <>
@@ -44,12 +53,9 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
       <Box sx={{ display: 'flex', marginTop: 2 }}>
         <Box sx={{ flex: 1 }}>
           <Button color="primary" disabled>
-            NEW TRANSACTION
+            NEW REQUEST
           </Button>
         </Box>
-        <Button color="error" onClick={remove}>
-          DELETE CONTRACT
-        </Button>
       </Box>
     </Paper>
   )

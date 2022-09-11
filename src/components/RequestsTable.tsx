@@ -6,13 +6,13 @@ const RequestsTable: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell size="small">ID</TableCell>
+          <TableCell sx={{ width: '1%' }}>ID</TableCell>
           <TableCell>Request Action</TableCell>
-          <TableCell size="small">Receiver</TableCell>
-          <TableCell align="right" size="small">
+          <TableCell sx={{ width: '25%' }}>Receiver</TableCell>
+          <TableCell sx={{ width: '1%' }} align="right">
             Confirmations
           </TableCell>
-          <TableCell align="right" size="small">
+          <TableCell sx={{ width: '1%' }} align="right">
             Action
           </TableCell>
         </TableRow>
