@@ -18,8 +18,6 @@ const ConfirmationsChip: React.FC<ConfirmationsChipProps> = ({ confirmations }) 
         label={`Confirmations needed: ${confirmations ?? 0}`}
         variant="outlined"
         color="success"
-        size="small"
-        sx={{ marginLeft: 1 }}
       />
     </ChipSkeleton>
   )

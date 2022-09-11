@@ -2,8 +2,8 @@ import { Alert, Box, Button, Divider, Paper, Typography } from '@mui/material'
 import React, { memo } from 'react'
 
 import useContract from '../hooks/useContract'
-import BalanceChip from './BalanceChip'
 import ConfirmationsChip from './ConfirmationsChip'
+import NearTokenChip from './NearTokenChip'
 import Request from './Request'
 import RequestsTable from './RequestsTable'
 
@@ -12,7 +12,7 @@ interface ContractProps {
 }
 
 const Contract: React.FC<ContractProps> = memo(({ name }) => {
-  const { balance, confirmations, failed, remove, requestIds } = useContract(name)
+  const { confirmations, failed, remove, requestIds } = useContract(name)
   return (
     <Paper sx={{ p: 3, marginTop: 2 }}>
       <Typography variant="h5" gutterBottom sx={{ flex: 1 }}>
@@ -25,10 +25,10 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
         </>
       ) : (
         <>
-          <Box sx={{ display: 'flex' }}>
-            <BalanceChip balance={balance} />
+          <Stack direction="row" spacing={1}>
             <ConfirmationsChip confirmations={confirmations} />
-          </Box>
+            <NearTokenChip contractId={name} withBalance={true} />
+          </Stack>
           {requestIds !== undefined && requestIds.length > 0 ? (
             <RequestsTable>
               {requestIds.map((requestId) => (
