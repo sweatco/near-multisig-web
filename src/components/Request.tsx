@@ -1,9 +1,10 @@
-import React, { memo, useState } from 'react'
 import { Alert, Button, Snackbar, Stack, TableCell, TableRow } from '@mui/material'
-import { useAppSelector } from '../hooks/useApp'
+import React, { memo, useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../hooks/useApp'
 import { useDialog } from '../hooks/useDialog'
 
 import useRequest from '../hooks/useRequest'
+import { ftListActions } from '../reducers/ft_list/reducer'
 import { metadataSelectors } from '../reducers/metadata'
 import { isFungibleTokenRequest } from '../utils/contracts/MultiSig'
 import ConfirmRequestDialog from './ConfirmRequestDialog'
@@ -17,6 +18,7 @@ interface RequestProps {
 
 const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   const contractConfirmations = useAppSelector((state) => metadataSelectors.getNumConfirmations(state, contractId))
+  const dispatch = useAppDispatch()
 
   const { request, confirmations } = useRequest(contractId, requestId)
   const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
@@ -25,6 +27,12 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
 
   const isFungibleToken = request ? isFungibleTokenRequest(request) : false
   const receiverId = request?.receiver_id
+
+  useEffect(() => {
+    if (isFungibleToken && receiverId) {
+      dispatch(ftListActions.addFungibleToken({ tokenId: receiverId, contractId: contractId }))
+    }
+  }, [isFungibleToken, contractId, receiverId, dispatch])
 
   return (
     <>
@@ -68,7 +76,7 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
 
   function renderReceiverId() {
     if (isFungibleToken && receiverId) {
-      return <FungibleTokenChip tokenId={receiverId} />
+      return <FungibleTokenChip tokenId={receiverId} contractId={contractId} />
     } else if (receiverId) {
       return `@${receiverId}`
     }

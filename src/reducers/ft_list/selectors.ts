@@ -5,7 +5,7 @@ import ftListSlice from './reducer'
 
 export const getFTListSlice = (state: RootState) => state[ftListSlice.name]
 
-export const getFTList = (state: RootState) => getFTListSlice(state).ftList
+export const getFTList = (state: RootState) => getFTListSlice(state).list
 
 export const makeFTListSelector = () => {
   const getContractId = (_: any, contractId: string) => contractId

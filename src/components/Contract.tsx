@@ -1,11 +1,13 @@
 import { Alert, Box, Button, Divider, Icon, IconButton, Paper, Stack, Typography } from '@mui/material'
-import React, { memo } from 'react'
+import React, { memo, useMemo } from 'react'
 
-import useContract from '../hooks/useContract'
 import ConfirmationsChip from './ConfirmationsChip'
+import FungibleTokenChip from './FungibleTokenChip'
 import NearTokenChip from './NearTokenChip'
 import Request from './Request'
 import RequestsTable from './RequestsTable'
+import useContract from '../hooks/useContract'
+import useFTListSelector from '../hooks/useFTListSelector'
 
 interface ContractProps {
   name: string
@@ -13,6 +15,8 @@ interface ContractProps {
 
 const Contract: React.FC<ContractProps> = memo(({ name }) => {
   const { confirmations, failed, remove, requestIds } = useContract(name)
+  const ftList = useFTListSelector(name)
+
   return (
     <Paper sx={{ p: 3, marginTop: 2 }}>
       <Stack direction="row">
@@ -37,6 +41,9 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
           <Stack direction="row" spacing={1}>
             <ConfirmationsChip confirmations={confirmations} />
             <NearTokenChip contractId={name} withBalance={true} />
+            {ftList.map((token) => (
+              <FungibleTokenChip key={token} tokenId={token} contractId={name} withBalance />
+            ))}
           </Stack>
           {requestIds !== undefined && requestIds.length > 0 ? (
             <RequestsTable>

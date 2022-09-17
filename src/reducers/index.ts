@@ -5,6 +5,7 @@ import metadata from './metadata/reducer'
 import requests from './requests/reducer'
 import ft_list from './ft_list/reducer'
 import ft_metadata from './ft_metadata/reducer'
+import ft_balances from './ft_balances/reducer'
 
 const rootReducer = combineReducers({
   [contracts.name]: contracts.reducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   [requests.name]: requests.reducer,
   [ft_list.name]: ft_list.reducer,
   [ft_metadata.name]: ft_metadata.reducer,
+  [ft_balances.name]: ft_balances.reducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>
