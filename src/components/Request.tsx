@@ -7,7 +7,7 @@ import useRequest from '../hooks/useRequest'
 import { ftListActions } from '../reducers/ft_list/reducer'
 import { metadataSelectors } from '../reducers/metadata'
 import { isFungibleTokenRequest } from '../utils/contracts/MultiSig'
-import ConfirmRequestDialog from './ConfirmRequestDialog'
+import ConfirmRequestDialog from './Dialogs/ConfirmRequestDialog'
 import FungibleTokenChip from './Chips/FungibleTokenChip'
 import RequestAction from './RequestAction'
 

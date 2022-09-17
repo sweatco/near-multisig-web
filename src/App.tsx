@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo } from 'react'
 import { Box, Button } from '@mui/material'
 
-import AddContractDialog from './components/AddContractDialog'
+import AddContractDialog from './components/Dialogs/AddContractDialog'
+import GenerateKeyDialog from './components/Dialogs/GenerateKeyDialog'
 import createAppComponent from './utils/createAppComponent'
 import { contractsActions } from './reducers/contracts/reducer'
 import { useAppDispatch, useAppSelector } from './hooks/useApp'
 import { contractSelectors } from './reducers/contracts'
 import Contract from './components/Contract'
 import { useDialog } from './hooks/useDialog'
-import GenerateKeyDialog from './components/GenerateKeyDialog'
 
 const App = createAppComponent(() => {
   const { open, openDialog, closeDialog } = useDialog(handleDialogResult)

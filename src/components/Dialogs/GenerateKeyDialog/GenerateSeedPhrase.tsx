@@ -22,6 +22,7 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
   const dialogContentRef = useRef()
   const [manualSeed, setManualSeed] = useState<string | null>(null)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const seed = useMemo(() => generateSeedPhrase(), [props.seedIndex])
   const parsedSeed = useMemo(() => (manualSeed ? parseSeedPhrase(manualSeed) : undefined), [manualSeed])
 

@@ -13,10 +13,10 @@ import {
   TextField,
 } from '@mui/material'
 import React, { FormEvent, useEffect, useState, useRef } from 'react'
-import confirmRequest from '../actions/chain/confirmRequest'
-import confirmRequestWithLedger from '../actions/chain/confirmRequestWithLedger'
-import { useAppDispatch } from '../hooks/useApp'
-import { ledgerManager } from '../utils/LedgerManager'
+import confirmRequest from '../../actions/chain/confirmRequest'
+import confirmRequestWithLedger from '../../actions/chain/confirmRequestWithLedger'
+import { useAppDispatch } from '../../hooks/useApp'
+import { ledgerManager } from '../../utils/LedgerManager'
 
 interface ConfirmRequestDialogProps {
   contractId: string

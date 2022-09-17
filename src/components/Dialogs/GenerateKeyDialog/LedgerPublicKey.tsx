@@ -12,7 +12,7 @@ import {
 import { Box } from '@mui/system'
 import ClipboardJS from 'clipboard'
 import { useEffect, useRef, useState } from 'react'
-import { ledgerManager } from '../utils/LedgerManager'
+import { ledgerManager } from '../../../utils/LedgerManager'
 
 const LedgerPublicKey = () => {
   const dialogContentRef = useRef()
