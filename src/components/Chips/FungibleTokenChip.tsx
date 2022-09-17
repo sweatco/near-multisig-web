@@ -1,8 +1,8 @@
 import { Avatar, Chip, CircularProgress } from '@mui/material'
 import React, { memo } from 'react'
-import useFTBalance from '../hooks/useFTBalance'
-import useFTMetadata from '../hooks/useFTMetadata'
-import formatBalance from '../utils/formatBalance'
+import useFTBalance from '../../hooks/useFTBalance'
+import useFTMetadata from '../../hooks/useFTMetadata'
+import formatBalance from '../../utils/formatBalance'
 import ChipSkeleton from './ChipSkeleton'
 
 interface FungibleTokenChipProps {

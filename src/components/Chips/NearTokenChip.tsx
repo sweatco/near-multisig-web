@@ -2,8 +2,8 @@ import { Avatar, Chip } from '@mui/material'
 import React, { memo } from 'react'
 import * as nearAPI from 'near-api-js'
 
-import { useAppSelector } from '../hooks/useApp'
-import { metadataSelectors } from '../reducers/metadata'
+import { useAppSelector } from '../../hooks/useApp'
+import { metadataSelectors } from '../../reducers/metadata'
 import ChipSkeleton from './ChipSkeleton'
 
 interface NearTokenChipProps {

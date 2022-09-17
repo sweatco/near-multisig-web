@@ -1,9 +1,9 @@
 import { Alert, Box, Button, Divider, Icon, IconButton, Paper, Stack, Typography } from '@mui/material'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
-import ConfirmationsChip from './ConfirmationsChip'
-import FungibleTokenChip from './FungibleTokenChip'
-import NearTokenChip from './NearTokenChip'
+import ConfirmationsChip from './Chips/ConfirmationsChip'
+import FungibleTokenChip from './Chips/FungibleTokenChip'
+import NearTokenChip from './Chips/NearTokenChip'
 import Request from './Request'
 import RequestsTable from './RequestsTable'
 import useContract from '../hooks/useContract'
