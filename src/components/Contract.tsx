@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Divider, Icon, IconButton, Paper, Stack, Typography } from '@mui/material'
+import { Alert, Box, Button, Divider, Icon, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
 import React, { memo } from 'react'
 
 import ConfirmationsChip from './Chips/ConfirmationsChip'
@@ -21,9 +21,12 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
     <Paper sx={{ p: 3, marginTop: 2 }}>
       <Stack direction="row">
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h5" gutterBottom sx={{ flex: 1 }}>
-            @{name}
-          </Typography>
+          <StyledTypography variant="h5" gutterBottom sx={{ flex: 1 }}>
+            @{name}{' '}
+            <StyledLink href={`#${name}`} underline="none">
+              #
+            </StyledLink>
+          </StyledTypography>
         </Box>
         <IconButton color="error" onClick={remove}>
           <Icon fontSize="inherit" className="material-symbols-outlined">
@@ -67,5 +70,15 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
     </Paper>
   )
 })
+
+const StyledLink = styled(Link)`
+  display: none;
+`
+
+const StyledTypography = styled(Typography)`
+  :hover ${StyledLink} {
+    display: inline;
+  }
+`
 
 export default Contract

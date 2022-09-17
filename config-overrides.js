@@ -1,4 +1,6 @@
-module.exports = function override(config, env) {
+const { useBabelRc, override } = require('customize-cra')
+
+const useFallback = () => (config) => {
   config.resolve.fallback = config.resolve.fallback ?? {}
   Object.assign(config.resolve.fallback, {
     stream: require.resolve('stream-browserify'),
@@ -7,3 +9,6 @@ module.exports = function override(config, env) {
 
   return config
 }
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+module.exports = override(useBabelRc(), useFallback())
