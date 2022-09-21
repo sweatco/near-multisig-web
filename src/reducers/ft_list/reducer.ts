@@ -22,6 +22,12 @@ export const ftListSlice = createSlice({
         state.list[tokenId].push(contractId)
       }
     },
+
+    deleteFungibleToken(state, action: PayloadAction<{ tokenId: string; contractId: string }>) {
+      const { tokenId, contractId } = action.payload
+      state.list[tokenId] = state.list[tokenId] ?? []
+      state.list[tokenId] = state.list[tokenId].filter((cid) => cid !== contractId)
+    },
   },
 })
 

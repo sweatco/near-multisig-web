@@ -13,16 +13,18 @@ interface FungibleTokenChipProps {
   withBalance?: boolean
   variant?: 'filled' | 'outlined'
   onClick?: MouseEventHandler<HTMLDivElement>
+  onDelete?: (event: any) => void
 }
 
 const FungibleTokenChip: React.FC<FungibleTokenChipProps> = memo(
-  ({ prefix, amount, contractId, tokenId, withBalance, variant = 'outlined', onClick }) => {
+  ({ prefix, amount, contractId, tokenId, withBalance, variant = 'outlined', onClick, onDelete }) => {
     const metadata = useFTMetadata(tokenId)
     const balance = useBalance(contractId, tokenId)
 
     return (
-      <ChipSkeleton isLoading={metadata === undefined}>
+      <ChipSkeleton isLoading={metadata === undefined} onClick={onDelete}>
         <Chip
+          onDelete={onDelete}
           onClick={onClick}
           avatar={
             metadata ? (
@@ -60,16 +62,6 @@ const FungibleTokenChip: React.FC<FungibleTokenChipProps> = memo(
 
       return labelParts.join(' ')
     }
-
-    // function renderBalance() {
-    //   if (balance && metadata && withBalance) {
-    //     return `${balance.toFixed()} ${metadata.symbol}`
-    //   } else if (metadata) {
-    //     return metadata.symbol
-    //   } else {
-    //     return 'Loading...'
-    //   }
-    // }
   }
 )
 
