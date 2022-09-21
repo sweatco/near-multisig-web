@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AccountBalance } from 'near-api-js/lib/account'
+import addRequest from '../../actions/chain/addRequest'
 import confirmRequest from '../../actions/chain/confirmRequest'
 import deleteRequest from '../../actions/chain/deleteRequest'
 import fetchContract from '../../actions/chain/fetchContract'
@@ -41,6 +42,10 @@ export const metadataSlice = createSlice({
         state.metadata[action.meta.arg] = { failed: true }
       })
       .addCase(confirmRequest.fulfilled, (state, action) => {
+        const { contractId } = action.meta.arg
+        state.metadata[contractId].invalidated = true
+      })
+      .addCase(addRequest.fulfilled, (state, action) => {
         const { contractId } = action.meta.arg
         state.metadata[contractId].invalidated = true
       })

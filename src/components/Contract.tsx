@@ -8,6 +8,8 @@ import Request from './Request'
 import RequestsTable from './RequestsTable'
 import useContract from '../hooks/useContract'
 import useFTListSelector from '../hooks/useFTListSelector'
+import RequestDialog from './Dialogs/RequestDialog'
+import { useDialog } from '../hooks/useDialog'
 
 interface ContractProps {
   name: string
@@ -15,6 +17,7 @@ interface ContractProps {
 
 const Contract: React.FC<ContractProps> = memo(({ name }) => {
   const { confirmations, failed, remove, requestIds } = useContract(name)
+  const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
   const ftList = useFTListSelector(name)
 
   return (
@@ -62,13 +65,23 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
 
       <Box sx={{ display: 'flex', marginTop: 2 }}>
         <Box sx={{ flex: 1 }}>
-          <Button color="primary" disabled>
+          <Button color="primary" onClick={handleNewRequest}>
             NEW REQUEST
           </Button>
         </Box>
       </Box>
+
+      <RequestDialog contractId={name} open={open} onClose={closeDialog} />
     </Paper>
   )
+
+  function handleNewRequest() {
+    openDialog()
+  }
+
+  function handleDialogResult(result?: boolean) {
+    //
+  }
 })
 
 const StyledLink = styled(Link)`

@@ -10,7 +10,13 @@ export interface FungibleTokenMetadata {
   decimals: number
 }
 
+export interface StorageBalance {
+  total: string
+  available: string
+}
+
 export interface FungibleTokenContract extends Contract {
+  storage_balance_of(options: { account_id: string }): Promise<StorageBalance | null>
   ft_metadata(): Promise<FungibleTokenMetadata>
   ft_total_supply(): Promise<string>
   ft_balance_of(options: { account_id: string }): Promise<string>
@@ -22,7 +28,7 @@ export interface FungibleTokenContract extends Contract {
 }
 
 const CONTRACT_METHODS = {
-  viewMethods: ['ft_balance_of', 'ft_total_supply', 'ft_metadata'],
+  viewMethods: ['ft_balance_of', 'ft_total_supply', 'ft_metadata', 'storage_balance_of'],
   changeMethods: ['ft_transfer'],
 }
 
