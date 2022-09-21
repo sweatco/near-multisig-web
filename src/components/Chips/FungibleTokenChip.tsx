@@ -1,8 +1,7 @@
 import { Avatar, Chip, CircularProgress } from '@mui/material'
 import React, { memo } from 'react'
-import useFTBalance from '../../hooks/useFTBalance'
+import useBalance from '../../hooks/useBalance'
 import useFTMetadata from '../../hooks/useFTMetadata'
-import formatBalance from '../../utils/formatBalance'
 import ChipSkeleton from './ChipSkeleton'
 
 interface FungibleTokenChipProps {
@@ -13,7 +12,7 @@ interface FungibleTokenChipProps {
 
 const FungibleTokenChip: React.FC<FungibleTokenChipProps> = memo(({ contractId, tokenId, withBalance }) => {
   const metadata = useFTMetadata(tokenId)
-  const balance = useFTBalance(contractId, tokenId)
+  const balance = useBalance(contractId, tokenId)
 
   return (
     <ChipSkeleton isLoading={metadata === undefined}>
@@ -35,7 +34,7 @@ const FungibleTokenChip: React.FC<FungibleTokenChipProps> = memo(({ contractId, 
 
   function renderBalance() {
     if (balance && metadata && withBalance) {
-      return `${formatBalance(balance, metadata)} ${metadata.symbol}`
+      return `${balance.toFixed()} ${metadata.symbol}`
     } else if (metadata) {
       return metadata.symbol
     } else {

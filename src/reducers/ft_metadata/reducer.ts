@@ -1,17 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { AccountBalance } from 'near-api-js/lib/account'
 import fetchFTMetadata from '../../actions/chain/fetchFTMetadata'
 import { FungibleTokenMetadata } from '../../utils/contracts/FungibleToken'
-
-interface InvalidatedMetadata {
-  invalidated?: boolean
-}
-
-export interface Metadata extends InvalidatedMetadata {
-  num_confirmations: number
-  balance: AccountBalance
-  request_ids: number[]
-}
 
 export interface FTRequestState {
   loading: boolean
@@ -26,11 +15,7 @@ interface FTMetadataState {
 export const ftMetadataSlice = createSlice({
   name: 'ft_metadata',
   initialState: { metadata: {} } as FTMetadataState,
-  reducers: {
-    // setMetadata(state, action: PayloadAction<{ contractId: string; metadata: Metadata | MetadataFailed }>) {
-    //   state.metadata[action.payload.contractId] = action.payload.metadata
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchFTMetadata.pending, (state, action) => {

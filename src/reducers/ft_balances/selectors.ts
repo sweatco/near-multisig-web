@@ -16,13 +16,13 @@ export const getAccountBalances = (state: RootState, accountId: string) => {
 
 export const makeAccountBalanceSelector = () => {
   const getAccountId = (_: any, accountId: string) => accountId
-  const getTokenId = (_: any, __: any, tokenId: string) => tokenId
+  const getTokenId = (_: any, __: any, tokenId?: string) => tokenId
   const accountSelector = createSelector(getFTBalances, getAccountId, (accounts, accountId) => {
     return accounts[accountId]
   })
 
   return createSelector(accountSelector, getTokenId, (balances, tokenId) => {
-    if (balances) {
+    if (balances && tokenId) {
       return balances.find((balance) => balance.tokenId === tokenId)
     }
   })

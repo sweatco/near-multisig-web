@@ -4,7 +4,8 @@ import ftMetadataSlice from './reducer'
 
 export const getFTMetadataSlice = (state: RootState) => state[ftMetadataSlice.name]
 
-export const getFTMetadata = (state: RootState, tokenId: string) => getFTMetadataSlice(state).metadata[tokenId]
+export const getFTMetadata = (state: RootState, tokenId?: string) =>
+  tokenId ? getFTMetadataSlice(state).metadata[tokenId] : undefined
 
 export const isFTMetadataLoading = (state: RootState, tokenId: string) => {
   const meta = getFTMetadata(state, tokenId)

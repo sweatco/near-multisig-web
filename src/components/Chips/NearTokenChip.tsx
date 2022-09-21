@@ -1,21 +1,19 @@
 import { Avatar, Chip } from '@mui/material'
 import React, { memo } from 'react'
-import * as nearAPI from 'near-api-js'
 
-import { useAppSelector } from '../../hooks/useApp'
-import { metadataSelectors } from '../../reducers/metadata'
 import ChipSkeleton from './ChipSkeleton'
+import useBalance from '../../hooks/useBalance'
 
 interface NearTokenChipProps {
   contractId: string
-  withBalance: boolean
+  withBalance?: boolean
 }
 
 //
 
 const NearTokenChip: React.FC<NearTokenChipProps> = memo(({ contractId, withBalance }) => {
-  const balance = useAppSelector((state) => metadataSelectors.getBalance(state, contractId))
-  const label = withBalance ? `${nearAPI.utils.format.formatNearAmount(balance?.available ?? '0', 2)} NEAR` : 'NEAR'
+  const balance = useBalance(contractId)
+  const label = withBalance ? `${balance?.toFixed()} NEAR` : 'NEAR'
 
   return (
     <ChipSkeleton isLoading={balance === undefined}>
