@@ -4,6 +4,7 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { Persistor } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
+import { ConfirmTransactionProvider } from './Dialogs/ConfirmTransaction/ConfirmTransactionProvider'
 
 interface RootProps {
   persistor: Persistor
@@ -27,7 +28,7 @@ const Root: React.FC<React.PropsWithChildren<RootProps>> = ({ store, persistor, 
       <PersistGate persistor={persistor}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {children}
+          <ConfirmTransactionProvider>{children}</ConfirmTransactionProvider>
         </ThemeProvider>
       </PersistGate>
     </Provider>
