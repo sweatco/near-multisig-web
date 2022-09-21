@@ -5,12 +5,11 @@ import { useAppDispatch, useAppSelector } from '../hooks/useApp'
 import useRequest from '../hooks/useRequest'
 import { ftListActions } from '../reducers/ft_list/reducer'
 import { metadataSelectors } from '../reducers/metadata'
-import { isFungibleTokenRequest } from '../utils/contracts/MultiSig'
-import FungibleTokenChip from './Chips/FungibleTokenChip'
 import RequestAction from './RequestAction'
 import useConfirmTransaction from './Dialogs/ConfirmTransaction/useConfirmTransaction'
 import confirmRequest from '../actions/chain/confirmRequest'
 import deleteRequest from '../actions/chain/deleteRequest'
+import { getReceiverList, humanifyActions, isFungibleTokenRequest } from '../utils/multisigHelpers'
 
 interface RequestProps {
   contractId: string
@@ -27,6 +26,9 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   const isFungibleToken = request ? isFungibleTokenRequest(request) : false
   const receiverId = request?.receiver_id
 
+  const humanActions = request ? humanifyActions(request) : []
+  const receiverList = request ? getReceiverList(request, humanActions) : []
+
   useEffect(() => {
     if (isFungibleToken && receiverId) {
       dispatch(ftListActions.addFungibleToken({ tokenId: receiverId, contractId: contractId }))
@@ -39,9 +41,10 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
         <TableCell>{requestId}</TableCell>
         <TableCell>
           <Stack direction="row" spacing={1}>
-            {request?.actions.map((action, index) => (
-              <RequestAction key={index} action={action} receiverId={request.receiver_id} />
-            ))}
+            {request &&
+              humanActions.map((action, index) => (
+                <RequestAction key={index} action={action} request={request} contractId={contractId} />
+              ))}
           </Stack>
         </TableCell>
         <TableCell>{renderReceiverId()}</TableCell>
@@ -63,11 +66,7 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   )
 
   function renderReceiverId() {
-    if (isFungibleToken && receiverId) {
-      return <FungibleTokenChip tokenId={receiverId} contractId={contractId} />
-    } else if (receiverId) {
-      return `@${receiverId}`
-    }
+    return receiverList.map((receiver) => `@${receiver}`).join(', ')
   }
 
   async function handleConfirm() {

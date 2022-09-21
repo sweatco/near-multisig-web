@@ -4,9 +4,8 @@ import { useAppDispatch, useAppSelector } from './useApp'
 import { ftBalancesSelectors } from '../reducers/ft_balances'
 import fetchFTBalance from '../actions/chain/fetchFTBalance'
 import { metadataSelectors } from '../reducers/metadata'
-import { NEAR_NOMINATION_EXP } from 'near-api-js/lib/utils/format'
 import useFTMetadata from './useFTMetadata'
-import { BN } from '../utils/formatBalance'
+import { BN, toNearBalance } from '../utils/formatBalance'
 
 const useBalance = (accountId: string, tokenId?: string) => {
   const nearBalance = useAppSelector((state) => metadataSelectors.getBalance(state, accountId))
@@ -24,7 +23,7 @@ const useBalance = (accountId: string, tokenId?: string) => {
   }, [dispatch, tokenId, accountId])
 
   if (!tokenId && nearBalance) {
-    return new BN(nearBalance.available).dividedBy(new BN(10).pow(NEAR_NOMINATION_EXP))
+    return toNearBalance(nearBalance.available)
   } else if (tokenId && balance && metadata) {
     return new BN(balance.balance).dividedBy(new BN(10).pow(metadata?.decimals))
   }
