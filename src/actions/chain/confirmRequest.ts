@@ -1,17 +1,23 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
-import { parseSeedPhrase } from 'near-seed-phrase'
 
 import { DefaultNet } from '../../utils/networks'
-import { getContract } from '../../utils/contracts/MultiSig'
+import { getSigner } from '../../utils/chainHelpers'
+import { parseTgas } from '../../utils/formatBalance'
+import LedgerManager from '../../utils/LedgerManager'
+import { getTransactionLastResult } from 'near-api-js/lib/providers'
 
 interface ConfirmRequestArgs {
-  key: string
+  key?: string
+  ledgerManager?: LedgerManager
   contractId: string
   requestId: number
 }
 
-type ConfirmRequestResult = boolean | string
+interface ConfirmRequestResult {
+  value: boolean | string
+  txHash: string
+}
 
 const confirmRequest = createAsyncThunk<
   ConfirmRequestResult,
@@ -19,34 +25,25 @@ const confirmRequest = createAsyncThunk<
   {
     rejectValue: Error
   }
->('chain/confirmRequest', async ({ key, contractId, requestId }, { rejectWithValue }) => {
-  const keyStore = new nearAPI.keyStores.InMemoryKeyStore()
-  const { keyPair, accountId = contractId } = parseKey(key)
-  keyStore.setKey(DefaultNet.networkId, accountId, keyPair)
-
+>('chain/confirmRequest', async ({ key, ledgerManager, contractId, requestId }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, keyStore })
-    const account = await near.account(accountId)
-    const contract = getContract(account, contractId)
+    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager) })
+    const account = await near.account(contractId)
 
-    return await contract.confirm({ request_id: requestId }, '250000000000000')
+    const rawResult = await account.functionCall({
+      contractId: contractId,
+      methodName: 'confirm',
+      args: { request_id: requestId },
+      gas: parseTgas(250),
+    })
+
+    const value = getTransactionLastResult(rawResult)
+    const txHash = rawResult.transaction_outcome.id
+
+    return { value, txHash }
   } catch (err) {
     return rejectWithValue(err as Error)
   }
 })
-
-function parseKey(key: string) {
-  if (key.split(' ').length > 1) {
-    // Seed Phrase
-    const { secretKey } = parseSeedPhrase(key)
-    return { keyPair: nearAPI.KeyPair.fromString(secretKey) }
-  } else if (key.split('/').length > 1) {
-    // With Account Id
-    return { accountId: key.split('/')[0], keyPair: nearAPI.KeyPair.fromString(key.split('/')[1]) }
-  } else {
-    // Private Key
-    return { keyPair: nearAPI.KeyPair.fromString(key) }
-  }
-}
 
 export default confirmRequest

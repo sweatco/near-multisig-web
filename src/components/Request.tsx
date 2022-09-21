@@ -1,15 +1,16 @@
-import { Alert, Button, Snackbar, Stack, TableCell, TableRow } from '@mui/material'
-import React, { memo, useEffect, useState } from 'react'
+import { Button, Icon, IconButton, Stack, TableCell, TableRow } from '@mui/material'
+import React, { memo, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/useApp'
-import { useDialog } from '../hooks/useDialog'
 
 import useRequest from '../hooks/useRequest'
 import { ftListActions } from '../reducers/ft_list/reducer'
 import { metadataSelectors } from '../reducers/metadata'
 import { isFungibleTokenRequest } from '../utils/contracts/MultiSig'
-import ConfirmRequestDialog from './Dialogs/ConfirmRequestDialog'
 import FungibleTokenChip from './Chips/FungibleTokenChip'
 import RequestAction from './RequestAction'
+import useConfirmTransaction from './Dialogs/ConfirmTransaction/useConfirmTransaction'
+import confirmRequest from '../actions/chain/confirmRequest'
+import deleteRequest from '../actions/chain/deleteRequest'
 
 interface RequestProps {
   contractId: string
@@ -19,11 +20,9 @@ interface RequestProps {
 const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   const contractConfirmations = useAppSelector((state) => metadataSelectors.getNumConfirmations(state, contractId))
   const dispatch = useAppDispatch()
+  const confirmTransaction = useConfirmTransaction()
 
   const { request, confirmations } = useRequest(contractId, requestId)
-  const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
-  const [result, setResult] = useState<boolean | string>()
-  const [resultVisible, setResultVisible] = useState(false)
 
   const isFungibleToken = request ? isFungibleTokenRequest(request) : false
   const receiverId = request?.receiver_id
@@ -48,27 +47,16 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
         <TableCell>{renderReceiverId()}</TableCell>
         <TableCell align="right">{confirmations ? `${confirmations.length}/${contractConfirmations}` : '-'}</TableCell>
         <TableCell align="right">
-          <Button variant="contained" color="success" onClick={handleConfirm} disabled={request === undefined}>
-            Confirm
-          </Button>
-          {request ? (
-            <>
-              <ConfirmRequestDialog contractId={contractId} requestId={requestId} open={open} onClose={closeDialog} />
-              <Snackbar open={resultVisible} autoHideDuration={6000} onClose={handleSnackClose}>
-                <Alert
-                  onClose={handleSnackClose}
-                  severity={result === true ? 'success' : 'error'}
-                  variant="filled"
-                  sx={{ width: '100%' }}>
-                  {typeof result === 'string'
-                    ? result
-                    : result === true
-                    ? 'Successfully confirmed!'
-                    : 'Confirmation failed'}
-                </Alert>
-              </Snackbar>
-            </>
-          ) : null}
+          <Stack direction="row" spacing={1}>
+            <Button variant="contained" color="success" onClick={handleConfirm} disabled={request === undefined}>
+              Confirm
+            </Button>
+            <IconButton color="warning" onClick={handleDelete} disabled={request === undefined}>
+              <Icon fontSize="inherit" className="material-symbols-outlined">
+                clear
+              </Icon>
+            </IconButton>
+          </Stack>
         </TableCell>
       </TableRow>
     </>
@@ -82,28 +70,35 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
     }
   }
 
-  function handleConfirm() {
-    openDialog()
+  async function handleConfirm() {
+    try {
+      await confirmTransaction({
+        onConfirmWithKey: async (key) => {
+          const result = await dispatch(confirmRequest({ key, contractId, requestId })).unwrap()
+          return typeof result.value === 'string' ? true : result.value
+        },
+        onConfirmWithLedger: async (ledgerManager) => {
+          const result = await dispatch(confirmRequest({ ledgerManager, contractId, requestId })).unwrap()
+          return typeof result.value === 'string' ? true : result.value
+        },
+      })
+    } catch (e) {}
   }
 
-  function handleDialogResult(result?: boolean | Error) {
-    if (result instanceof Error) {
-      if ('kind' in result) {
-        setResult((result as any).kind?.ExecutionError ?? 'Unknown error')
-      } else {
-        setResult(result.message)
-      }
-    } else if (typeof result === 'boolean') {
-      setResult(result)
-    } else {
-      setResult('Unknown error')
-    }
-
-    setResultVisible(true)
-  }
-
-  function handleSnackClose() {
-    setResultVisible(false)
+  async function handleDelete() {
+    try {
+      await confirmTransaction({
+        title: `Confirm deletion of Request ${requestId}`,
+        onConfirmWithKey: async (key) => {
+          await dispatch(deleteRequest({ key, contractId, requestId })).unwrap()
+          return true
+        },
+        onConfirmWithLedger: async (ledgerManager) => {
+          await dispatch(deleteRequest({ ledgerManager, contractId, requestId })).unwrap()
+          return true
+        },
+      })
+    } catch (e) {}
   }
 })
 

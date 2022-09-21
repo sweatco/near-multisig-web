@@ -8,4 +8,14 @@ const formatBalance = (balance: string | BigNumber, metadata: FungibleTokenMetad
   return bn.dividedBy(new BN(10).pow(metadata.decimals)).toFixed()
 }
 
+export const parseBalance = (balance: string, metadata: FungibleTokenMetadata) => {
+  return BN(balance).multipliedBy(new BN(10).pow(metadata.decimals)).toFixed()
+}
+
+export const parseTgas = (tgas: number) => {
+  if (tgas) {
+    return BN(tgas).multipliedBy(new BN(10).pow(12)).toFixed()
+  }
+}
+
 export default formatBalance
