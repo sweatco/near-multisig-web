@@ -6,7 +6,7 @@ export const BN = BigNumber.clone({ DECIMAL_PLACES: 2, ROUNDING_MODE: BigNumber.
 
 const formatBalance = (balance: string | BigNumber, metadata: FungibleTokenMetadata) => {
   const bn = new BN(balance)
-  return bn.dividedBy(new BN(10).pow(metadata.decimals)).toFixed()
+  return bn.dividedBy(new BN(10).pow(metadata.decimals)).toFormat()
 }
 
 export const parseBalance = (balance: string, metadata: FungibleTokenMetadata) => {
@@ -24,7 +24,7 @@ export const toNearBalance = (balance: string | BigNumber) => {
 }
 
 export const formatNearBalance = (balance: string | BigNumber) => {
-  return toNearBalance(balance).toFixed()
+  return toNearBalance(balance).toFormat()
 }
 
 export default formatBalance

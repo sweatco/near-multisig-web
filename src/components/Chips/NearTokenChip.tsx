@@ -47,7 +47,7 @@ const NearTokenChip: React.FC<NearTokenChipProps> = memo(
       if (amount) {
         labelParts.push(formatNearBalance(amount))
       } else if (withBalance) {
-        labelParts.push(balance?.toFixed())
+        labelParts.push(balance?.toFormat())
       }
 
       labelParts.push('NEAR')

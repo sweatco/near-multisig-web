@@ -54,7 +54,7 @@ const FungibleTokenChip: React.FC<FungibleTokenChipProps> = memo(
         if (amount) {
           labelParts.push(formatBalance(amount, metadata))
         } else if (withBalance && balance) {
-          labelParts.push(balance.toFixed())
+          labelParts.push(balance.toFormat())
         }
 
         labelParts.push(metadata.symbol)
