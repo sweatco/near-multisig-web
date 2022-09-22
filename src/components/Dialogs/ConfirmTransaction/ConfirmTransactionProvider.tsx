@@ -71,6 +71,7 @@ export const ConfirmTransactionProvider: React.FC<React.PropsWithChildren<{}>> =
         {...options}
       />
       <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={resultVisible}
         autoHideDuration={6000}
         onClose={handleSnackClose}
