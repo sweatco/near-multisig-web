@@ -10,6 +10,7 @@ import useConfirmTransaction from './Dialogs/ConfirmTransaction/useConfirmTransa
 import confirmRequest from '../actions/chain/confirmRequest'
 import deleteRequest from '../actions/chain/deleteRequest'
 import { getReceiverList, humanifyActions, isFungibleTokenRequest } from '../utils/multisigHelpers'
+import fetchFTBalance from '../actions/chain/fetchFTBalance'
 
 interface RequestProps {
   contractId: string
@@ -74,10 +75,16 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
       await confirmTransaction({
         onConfirmWithKey: async (key) => {
           const result = await dispatch(confirmRequest({ key, contractId, requestId })).unwrap()
+          if (isFungibleToken && request && result.value === '') {
+            dispatch(fetchFTBalance({ tokenId: request.receiver_id, accountId: contractId, force: true }))
+          }
           return typeof result.value === 'string' ? true : result.value
         },
         onConfirmWithLedger: async (ledgerManager) => {
           const result = await dispatch(confirmRequest({ ledgerManager, contractId, requestId })).unwrap()
+          if (isFungibleToken && request && result.value === '') {
+            dispatch(fetchFTBalance({ tokenId: request.receiver_id, accountId: contractId, force: true }))
+          }
           return typeof result.value === 'string' ? true : result.value
         },
       })
