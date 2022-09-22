@@ -62,7 +62,7 @@ export const requestsSlice = createSlice({
       })
       .addCase(confirmRequest.fulfilled, (state, action) => {
         const { contractId, requestId } = action.meta.arg
-        if (typeof action.payload === 'boolean' && action.payload === true) {
+        if (typeof action.payload.value === 'boolean' && action.payload.value === true) {
           state.requests[contractId]![requestId].invalidated = true
         }
       })
