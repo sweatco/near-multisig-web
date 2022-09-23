@@ -1,17 +1,17 @@
-import { Alert, Snackbar } from '@mui/material'
 import React, { useCallback, useState } from 'react'
+import { useSnackbar } from 'notistack'
+
 import ConfirmContext, { ConfirmTransactionOptions } from './ConfirmTransactionContext'
 import ConfirmTransactionDialog from './ConfirmTransactionDialog'
 
 type ResolveReject = [(result: boolean) => void, (reason?: string) => void]
 
 export const ConfirmTransactionProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+  const { enqueueSnackbar } = useSnackbar()
+
   const [options, setOptions] = useState<ConfirmTransactionOptions>()
   const [resolveReject, setResolveReject] = useState<ResolveReject | []>([])
   const [resolve, reject] = resolveReject
-
-  const [result, setResult] = useState<boolean | string>()
-  const [resultVisible, setResultVisible] = useState(false)
 
   const confirm = useCallback((options: ConfirmTransactionOptions) => {
     return new Promise((resolve, reject) => {
@@ -30,13 +30,15 @@ export const ConfirmTransactionProvider: React.FC<React.PropsWithChildren<{}>> =
   const handleResult = useCallback(
     (result: boolean) => {
       if (resolve) {
-        setResult(result)
-        setResultVisible(true)
+        enqueueSnackbar(result === true ? 'Successfully confirmed!' : 'Confirmation failed', {
+          variant: result === true ? 'success' : 'error',
+        })
+
         resolve(result)
         handleClose()
       }
     },
-    [resolve, handleClose]
+    [resolve, handleClose, enqueueSnackbar]
   )
 
   const handleFail = useCallback(
@@ -51,13 +53,15 @@ export const ConfirmTransactionProvider: React.FC<React.PropsWithChildren<{}>> =
           }
         }
 
-        setResult(rejectReason)
-        setResultVisible(true)
+        enqueueSnackbar(rejectReason, {
+          variant: 'error',
+        })
+
         reject(rejectReason)
         handleClose()
       }
     },
-    [reject, handleClose]
+    [reject, handleClose, enqueueSnackbar]
   )
 
   return (
@@ -70,36 +74,6 @@ export const ConfirmTransactionProvider: React.FC<React.PropsWithChildren<{}>> =
         onFail={handleFail}
         {...options}
       />
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={resultVisible}
-        autoHideDuration={6000}
-        onClose={handleSnackClose}
-        TransitionProps={{
-          onExited: handleSnackExit,
-        }}>
-        <Alert onClose={handleSnackClose} severity={result === true ? 'success' : 'error'} variant="filled">
-          {gerResultMessage()}
-        </Alert>
-      </Snackbar>
     </>
   )
-
-  function gerResultMessage() {
-    if (typeof result === 'string') {
-      return result
-    } else if (result === true) {
-      return 'Successfully confirmed!'
-    } else {
-      return 'Confirmation failed'
-    }
-  }
-
-  function handleSnackClose() {
-    setResultVisible(false)
-  }
-
-  function handleSnackExit() {
-    setResult(undefined)
-  }
 }

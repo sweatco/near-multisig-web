@@ -4,6 +4,7 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { Persistor } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
+import { SnackbarProvider } from 'notistack'
 import { ConfirmTransactionProvider } from './Dialogs/ConfirmTransaction/ConfirmTransactionProvider'
 
 interface RootProps {
@@ -28,7 +29,12 @@ const Root: React.FC<React.PropsWithChildren<RootProps>> = ({ store, persistor, 
       <PersistGate persistor={persistor}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <ConfirmTransactionProvider>{children}</ConfirmTransactionProvider>
+          <SnackbarProvider
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            autoHideDuration={6000}
+            dense={true}>
+            <ConfirmTransactionProvider>{children}</ConfirmTransactionProvider>
+          </SnackbarProvider>
         </ThemeProvider>
       </PersistGate>
     </Provider>

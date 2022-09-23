@@ -14,7 +14,7 @@ interface ConfirmRequestArgs {
   requestId: number
 }
 
-interface ConfirmRequestResult {
+export interface ConfirmRequestResult {
   value: boolean | string
   txHash: string
 }

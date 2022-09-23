@@ -171,7 +171,7 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
       if (!(await dispatch(fetchFTStorageBalance({ tokenId: token, accountId: receiver })).unwrap())) {
         actions.push({
           type: 'FunctionCall',
-          gas: parseTgas(30),
+          gas: parseTgas(10),
           method_name: 'storage_deposit',
           args: Buffer.from(JSON.stringify({ account_id: receiver, registration_only: true })).toString('base64'),
           deposit: parseNearAmount('0.0009'),
@@ -180,7 +180,7 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
 
       actions.push({
         type: 'FunctionCall',
-        gas: parseTgas(15),
+        gas: parseTgas(10),
         method_name: 'ft_transfer',
         args: Buffer.from(JSON.stringify({ amount: parseBalance(amount, ftMetadata), receiver_id: receiver })).toString(
           'base64'
@@ -208,13 +208,13 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
         await confirmTransaction({
           onConfirmWithKey: async (key) => {
             const result = await dispatch(
-              addRequest({ key, contractId: contractId, request: await getRequest(), tgas: 250 })
+              addRequest({ key, contractId: contractId, request: await getRequest(), tgas: 50 })
             ).unwrap()
             return typeof result === 'number'
           },
           onConfirmWithLedger: async (ledgerManager) => {
             const result = await dispatch(
-              addRequest({ ledgerManager, contractId: contractId, request: await getRequest(), tgas: 250 })
+              addRequest({ ledgerManager, contractId: contractId, request: await getRequest(), tgas: 50 })
             ).unwrap()
             return typeof result === 'number'
           },

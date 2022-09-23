@@ -1,16 +1,18 @@
 import { Button, Icon, IconButton, Stack, TableCell, TableRow } from '@mui/material'
 import React, { memo, useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '../hooks/useApp'
+import { useSnackbar } from 'notistack'
 
 import useRequest from '../hooks/useRequest'
+import { useAppDispatch, useAppSelector } from '../hooks/useApp'
 import { ftListActions } from '../reducers/ft_list/reducer'
 import { metadataSelectors } from '../reducers/metadata'
 import RequestAction from './RequestAction'
 import useConfirmTransaction from './Dialogs/ConfirmTransaction/useConfirmTransaction'
-import confirmRequest from '../actions/chain/confirmRequest'
+import confirmRequest, { ConfirmRequestResult } from '../actions/chain/confirmRequest'
 import deleteRequest from '../actions/chain/deleteRequest'
 import { getReceiverList, humanifyActions, isFungibleTokenRequest } from '../utils/multisigHelpers'
 import fetchFTBalance from '../actions/chain/fetchFTBalance'
+import { DefaultNet } from '../utils/networks'
 
 interface RequestProps {
   contractId: string
@@ -19,9 +21,10 @@ interface RequestProps {
 
 const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   const contractConfirmations = useAppSelector((state) => metadataSelectors.getNumConfirmations(state, contractId))
+
   const dispatch = useAppDispatch()
   const confirmTransaction = useConfirmTransaction()
-
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
   const { request, confirmations } = useRequest(contractId, requestId)
 
   const isFungibleToken = request ? isFungibleTokenRequest(request) : false
@@ -71,21 +74,51 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
   }
 
   async function handleConfirm() {
+    function checkResult(result: ConfirmRequestResult) {
+      if (isFungibleToken && request && result.value === '') {
+        dispatch(fetchFTBalance({ tokenId: request.receiver_id, accountId: contractId, force: true }))
+      }
+
+      if (result.value === '') {
+        setTimeout(() => {
+          enqueueSnackbar('Confirmation details', {
+            variant: 'default',
+            persist: true,
+            action: (snackbarId) => (
+              <>
+                <Button
+                  size="medium"
+                  onClick={() => {
+                    window.open(`${DefaultNet.explorerUrl}/transactions/${result.txHash}`, '_blank')
+                  }}>
+                  Open TX
+                </Button>
+                <Button
+                  color="error"
+                  size="medium"
+                  onClick={() => {
+                    closeSnackbar(snackbarId)
+                  }}>
+                  Dismiss
+                </Button>
+              </>
+            ),
+          })
+        }, 500)
+      }
+
+      return typeof result.value === 'string' ? true : result.value
+    }
+
     try {
       await confirmTransaction({
         onConfirmWithKey: async (key) => {
           const result = await dispatch(confirmRequest({ key, contractId, requestId })).unwrap()
-          if (isFungibleToken && request && result.value === '') {
-            dispatch(fetchFTBalance({ tokenId: request.receiver_id, accountId: contractId, force: true }))
-          }
-          return typeof result.value === 'string' ? true : result.value
+          return checkResult(result)
         },
         onConfirmWithLedger: async (ledgerManager) => {
           const result = await dispatch(confirmRequest({ ledgerManager, contractId, requestId })).unwrap()
-          if (isFungibleToken && request && result.value === '') {
-            dispatch(fetchFTBalance({ tokenId: request.receiver_id, accountId: contractId, force: true }))
-          }
-          return typeof result.value === 'string' ? true : result.value
+          return checkResult(result)
         },
       })
     } catch (e) {}
