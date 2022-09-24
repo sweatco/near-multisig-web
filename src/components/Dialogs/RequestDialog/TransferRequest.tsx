@@ -84,7 +84,7 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
   return (
     <form onSubmit={handleSubmit}>
       <DialogTitle>New Request</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ mb: -3 }}>
         <Stack direction="row" spacing={2}>
           <Box flex={1}>
             <FormControl size="small" fullWidth margin="dense">
@@ -108,27 +108,18 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
           </Box>
           <Box flex={1}></Box>
         </Stack>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{ minHeight: 105 }}>
           <Box flex={1}>
             <TextField
               fullWidth
               label="Enter recepient"
               variant="outlined"
-              color={receiverResponse === ReceiverResponse.EXISTS ? 'success' : undefined}
-              error={receiverResponse === ReceiverResponse.FAIL}
               margin="normal"
+              color={receiverResponse === ReceiverResponse.FAIL ? 'warning' : undefined}
+              autoComplete="off"
               value={receiver}
               onChange={handleReceiverChange}
-              InputProps={{
-                endAdornment:
-                  receiverResponse === ReceiverResponse.EXISTS ? (
-                    <InputAdornment position="start">
-                      <Icon fontSize="inherit" className="material-symbols-outlined">
-                        done
-                      </Icon>
-                    </InputAdornment>
-                  ) : undefined,
-              }}
+              helperText={receiverResponse === ReceiverResponse.FAIL ? 'Account does not exist on-chain' : undefined}
             />
           </Box>
           <Box flex={1}>
@@ -140,7 +131,7 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
               autoComplete="off"
               value={amount}
               onChange={handleAmountChange}
-              helperText={amount !== '' && !isValidAmount ? 'More then available balance' : null}
+              helperText={amount !== '' && !isValidAmount ? `MAX you can send ${ftBalance?.toFormat()}` : null}
               error={amount !== '' && !isValidAmount}
             />
           </Box>
@@ -156,7 +147,7 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
   )
 
   function getDisabledStatus() {
-    return !(receiver !== '' && receiverResponse === ReceiverResponse.EXISTS && amount !== '' && isValidAmount)
+    return !(receiver !== '' && amount !== '' && isValidAmount)
   }
 
   async function getRequest() {
@@ -232,6 +223,7 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
 
   function handleReceiverChange(event: ChangeEvent<HTMLInputElement>) {
     setReceiver(event.target.value)
+    setReceiverResponse(ReceiverResponse.NOT_CHECKED)
   }
 
   function handleAmountChange(event: ChangeEvent<HTMLInputElement>) {
