@@ -2,13 +2,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PersistConfig, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
+interface LedgerPathChangePayload {
+  contract_id: string
+  path: number
+}
+
 interface ContractsState {
   contracts: string[]
+  ledger?: { [contract_id: string]: number }
 }
 
 export const contractsSlice = createSlice({
   name: 'contracts',
-  initialState: { contracts: [] } as ContractsState,
+  initialState: { contracts: [], ledger: {} } as ContractsState,
   reducers: {
     addContract(state, action: PayloadAction<string>) {
       if (!state.contracts.includes(action.payload)) {
@@ -17,6 +23,11 @@ export const contractsSlice = createSlice({
     },
     removeContract(state, action: PayloadAction<string>) {
       state.contracts = state.contracts.filter((id) => id !== action.payload)
+      delete state.ledger?.[action.payload]
+    },
+    setLedgerPath(state, action: PayloadAction<LedgerPathChangePayload>) {
+      state.ledger = state.ledger ?? {}
+      state.ledger[action.payload.contract_id] = action.payload.path
     },
   },
 })

@@ -13,6 +13,9 @@ import {
   TextField,
 } from '@mui/material'
 import React, { FormEvent, useEffect, useState, useRef } from 'react'
+import { useAppDispatch, useAppSelector } from '../../../hooks/useApp'
+import { contractSelectors } from '../../../reducers/contracts'
+import { contractsActions } from '../../../reducers/contracts/reducer'
 import { ledgerManager } from '../../../utils/LedgerManager'
 import { ConfirmTransactionOptions } from './ConfirmTransactionContext'
 
@@ -26,6 +29,7 @@ interface ConfirmTransactionDialogProps extends Partial<ConfirmTransactionOption
 const ConfirmTransactionDialog: React.FC<ConfirmTransactionDialogProps> = ({
   title,
   open,
+  contractId,
   onResult,
   onFail,
   onClose,
@@ -36,6 +40,12 @@ const ConfirmTransactionDialog: React.FC<ConfirmTransactionDialogProps> = ({
   const [ledgerLoading, setLedgerLoading] = useState(false)
   const [key, setKey] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const dispath = useAppDispatch()
+  const ledgerPathValue = useAppSelector((state) =>
+    contractId ? contractSelectors.getLedgerPath(state, contractId) : undefined
+  )
+  const [ledgerPath, setLedgerPath] = useState(1)
 
   useEffect(() => {
     if (open) {
@@ -55,10 +65,18 @@ const ConfirmTransactionDialog: React.FC<ConfirmTransactionDialogProps> = ({
         <form onSubmit={handleSubmit}>
           <DialogTitle>{title ?? 'Confirm Transaction'}</DialogTitle>
           <DialogContent>
-            <Stack direction="row">
+            <Stack direction="row" spacing={2} mt={1} mb={4}>
               <Button variant="contained" color="secondary" onClick={confirmWithLedger}>
                 Confirm with Ledger
               </Button>
+              <TextField
+                value={ledgerPathValue ?? ledgerPath}
+                onChange={handleLedgerPathChange}
+                label="Path"
+                type="number"
+                autoComplete="off"
+                sx={{ width: '4em' }}
+              />
             </Stack>
             <Divider sx={{ marginTop: 3 }} />
             <DialogContentText sx={{ paddingTop: 2 }}>
@@ -99,6 +117,17 @@ const ConfirmTransactionDialog: React.FC<ConfirmTransactionDialogProps> = ({
     setKey(event.target.value)
   }
 
+  function handleLedgerPathChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = parseInt(event.target.value)
+    if (!isNaN(value)) {
+      if (contractId) {
+        dispath(contractsActions.setLedgerPath({ contract_id: contractId, path: value }))
+      } else {
+        setLedgerPath(value)
+      }
+    }
+  }
+
   function handleClose() {
     onClose()
   }
@@ -113,7 +142,7 @@ const ConfirmTransactionDialog: React.FC<ConfirmTransactionDialogProps> = ({
     setLedgerLoading(true)
 
     try {
-      const result = await onConfirmWithLedger!(ledgerManager)
+      const result = await onConfirmWithLedger!(ledgerManager, ledgerPathValue ?? ledgerPath)
       onResult(result)
     } catch (error: any) {
       onFail(error)

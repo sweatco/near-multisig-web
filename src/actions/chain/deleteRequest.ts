@@ -9,6 +9,7 @@ import LedgerManager from '../../utils/LedgerManager'
 interface DeleteRequestArgs {
   key?: string
   ledgerManager?: LedgerManager
+  ledgerPath?: number
   contractId: string
   requestId: number
 }
@@ -19,9 +20,9 @@ const deleteRequest = createAsyncThunk<
   {
     rejectValue: Error
   }
->('chain/deleteRequest', async ({ key, ledgerManager, contractId, requestId }, { rejectWithValue }) => {
+>('chain/deleteRequest', async ({ key, ledgerManager, ledgerPath, contractId, requestId }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager) })
+    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager, ledgerPath) })
     const account = await near.account(contractId)
     const contract = getContract(account, contractId)
 

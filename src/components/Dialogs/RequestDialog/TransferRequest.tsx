@@ -206,15 +206,16 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
     try {
       if (
         await confirmTransaction({
+          contractId,
           onConfirmWithKey: async (key) => {
             const result = await dispatch(
               addRequest({ key, contractId: contractId, request: await getRequest(), tgas: 50 })
             ).unwrap()
             return typeof result === 'number'
           },
-          onConfirmWithLedger: async (ledgerManager) => {
+          onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
             const result = await dispatch(
-              addRequest({ ledgerManager, contractId: contractId, request: await getRequest(), tgas: 50 })
+              addRequest({ ledgerManager, ledgerPath, contractId, request: await getRequest(), tgas: 50 })
             ).unwrap()
             return typeof result === 'number'
           },

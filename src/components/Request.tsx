@@ -112,12 +112,13 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
 
     try {
       await confirmTransaction({
+        contractId,
         onConfirmWithKey: async (key) => {
           const result = await dispatch(confirmRequest({ key, contractId, requestId })).unwrap()
           return checkResult(result)
         },
-        onConfirmWithLedger: async (ledgerManager) => {
-          const result = await dispatch(confirmRequest({ ledgerManager, contractId, requestId })).unwrap()
+        onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
+          const result = await dispatch(confirmRequest({ ledgerManager, ledgerPath, contractId, requestId })).unwrap()
           return checkResult(result)
         },
       })
@@ -132,8 +133,8 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
           await dispatch(deleteRequest({ key, contractId, requestId })).unwrap()
           return true
         },
-        onConfirmWithLedger: async (ledgerManager) => {
-          await dispatch(deleteRequest({ ledgerManager, contractId, requestId })).unwrap()
+        onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
+          await dispatch(deleteRequest({ ledgerManager, ledgerPath, contractId, requestId })).unwrap()
           return true
         },
       })

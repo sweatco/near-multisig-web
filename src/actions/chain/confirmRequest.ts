@@ -10,6 +10,7 @@ import { getTransactionLastResult } from 'near-api-js/lib/providers'
 interface ConfirmRequestArgs {
   key?: string
   ledgerManager?: LedgerManager
+  ledgerPath?: number
   contractId: string
   requestId: number
 }
@@ -25,9 +26,9 @@ const confirmRequest = createAsyncThunk<
   {
     rejectValue: Error
   }
->('chain/confirmRequest', async ({ key, ledgerManager, contractId, requestId }, { rejectWithValue }) => {
+>('chain/confirmRequest', async ({ key, ledgerManager, ledgerPath, contractId, requestId }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager) })
+    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager, ledgerPath) })
     const account = await near.account(contractId)
 
     const rawResult = await account.functionCall({

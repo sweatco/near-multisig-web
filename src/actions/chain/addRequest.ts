@@ -10,6 +10,7 @@ import LedgerManager from '../../utils/LedgerManager'
 interface AddRequestArgs {
   key?: string
   ledgerManager?: LedgerManager
+  ledgerPath?: number
   contractId: string
   request: MultiSigRequest
   tgas?: number
@@ -23,9 +24,9 @@ const addRequest = createAsyncThunk<
   {
     rejectValue: Error
   }
->('chain/addRequest', async ({ key, ledgerManager, contractId, request, tgas }, { rejectWithValue }) => {
+>('chain/addRequest', async ({ key, ledgerManager, ledgerPath, contractId, request, tgas }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager) })
+    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager, ledgerPath) })
     const account = await near.account(contractId)
     const contract = getContract(account, contractId)
 

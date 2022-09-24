@@ -27,7 +27,7 @@ export class LedgerSigner extends Signer {
 
   async signMessage(message: Uint8Array, accountId?: string, networkId?: string): Promise<Signature> {
     const publicKey = await this.getPublicKey(accountId, networkId)
-    const signature = await this.ledgerManager.sign(message)
+    const signature = await this.ledgerManager.sign(message, this.path)
     return { signature, publicKey }
   }
 

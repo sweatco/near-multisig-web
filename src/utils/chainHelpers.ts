@@ -15,16 +15,20 @@ export function parseKey(key: string) {
   }
 }
 
-export function getSigner(accountId: string, key?: string, ledgerManager?: LedgerManager, ledgerPath?: string) {
+export function getSigner(accountId: string, key?: string, ledgerManager?: LedgerManager, ledgerPath?: number) {
   if (key) {
     const keyStore = new nearAPI.keyStores.InMemoryKeyStore()
     const keyPair = parseKey(key)
     keyStore.setKey(DefaultNet.networkId, accountId, keyPair)
     return { keyStore }
   } else if (ledgerManager) {
-    const signer = new LedgerSigner(ledgerManager, ledgerPath)
+    const signer = new LedgerSigner(ledgerManager, deriveLedgerPath(ledgerPath))
     return { signer }
   } else {
     return {}
   }
+}
+
+export function deriveLedgerPath(pathComponent?: number) {
+  return `44'/397'/0'/0'/${pathComponent ?? 1}'`
 }
