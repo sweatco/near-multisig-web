@@ -4,6 +4,7 @@ import { AccountBalance } from 'near-api-js/lib/account'
 
 import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/contracts/MultiSig'
+import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 interface FetchContractResult {
   balance: AccountBalance
@@ -15,7 +16,7 @@ const fetchContract = createAsyncThunk<
   FetchContractResult,
   string,
   {
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >('chain/fetchContract', async (contractId, { rejectWithValue }) => {
   const near = await nearAPI.connect(DefaultNet)
@@ -30,7 +31,7 @@ const fetchContract = createAsyncThunk<
     ])
     return { balance, num_confirmations, request_ids }
   } catch (err) {
-    return rejectWithValue(err as Error)
+    return rejectWithValue(errorToJson(err))
   }
 })
 

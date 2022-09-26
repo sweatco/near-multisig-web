@@ -4,7 +4,7 @@ import * as nearAPI from 'near-api-js'
 import { DefaultNet } from '../../utils/networks'
 import { getContract, MultiSigRequest } from '../../utils/contracts/MultiSig'
 import { parseTgas } from '../../utils/formatBalance'
-import { getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
 import LedgerManager from '../../utils/LedgerManager'
 
 interface AddRequestArgs {
@@ -22,7 +22,7 @@ const addRequest = createAsyncThunk<
   AddRequestResult,
   AddRequestArgs,
   {
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >('chain/addRequest', async ({ key, ledgerManager, ledgerPath, contractId, request, tgas }, { rejectWithValue }) => {
   try {
@@ -30,9 +30,18 @@ const addRequest = createAsyncThunk<
     const account = await near.account(contractId)
     const contract = getContract(account, contractId)
 
-    return await contract.add_request_and_confirm({ request: request }, tgas ? parseTgas(tgas) : undefined)
+    const accessKeyInfo = await account.findAccessKey(contractId, [])
+
+    if (
+      accessKeyInfo?.accessKey.permission === 'FullAccess' ||
+      accessKeyInfo?.accessKey.permission.FunctionCall.method_names?.includes('add_request_and_confirm')
+    ) {
+      return await contract.add_request_and_confirm({ request: request }, tgas ? parseTgas(tgas) : undefined)
+    } else {
+      return await contract.add_request({ request: request }, tgas ? parseTgas(tgas) : undefined)
+    }
   } catch (err) {
-    return rejectWithValue(err as Error)
+    return rejectWithValue(errorToJson(err))
   }
 })
 

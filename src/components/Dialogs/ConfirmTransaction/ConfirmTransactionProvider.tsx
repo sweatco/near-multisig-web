@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack'
 
 import ConfirmContext, { ConfirmTransactionOptions } from './ConfirmTransactionContext'
 import ConfirmTransactionDialog from './ConfirmTransactionDialog'
+import { ErrorObject, errorToMessage } from '../../../utils/chainHelpers'
 
 type ResolveReject = [(result: boolean) => void, (reason?: string) => void]
 
@@ -42,16 +43,9 @@ export const ConfirmTransactionProvider: React.FC<React.PropsWithChildren<{}>> =
   )
 
   const handleFail = useCallback(
-    (reason: any) => {
+    (reason: ErrorObject) => {
       if (reject) {
-        let rejectReason = 'Unknown error'
-        if (reason instanceof Error) {
-          if ('kind' in reason) {
-            rejectReason = (reason as any).kind?.ExecutionError ?? 'Unknown error'
-          } else {
-            rejectReason = reason.message
-          }
-        }
+        const rejectReason = errorToMessage(reason)
 
         enqueueSnackbar(rejectReason, {
           variant: 'error',

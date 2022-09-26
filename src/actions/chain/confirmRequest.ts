@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
 
 import { DefaultNet } from '../../utils/networks'
-import { getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
 import { parseTgas } from '../../utils/formatBalance'
 import LedgerManager from '../../utils/LedgerManager'
 import { getTransactionLastResult } from 'near-api-js/lib/providers'
@@ -24,7 +24,7 @@ const confirmRequest = createAsyncThunk<
   ConfirmRequestResult,
   ConfirmRequestArgs,
   {
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >('chain/confirmRequest', async ({ key, ledgerManager, ledgerPath, contractId, requestId }, { rejectWithValue }) => {
   try {
@@ -43,7 +43,7 @@ const confirmRequest = createAsyncThunk<
 
     return { value, txHash }
   } catch (err) {
-    return rejectWithValue(err as Error)
+    return rejectWithValue(errorToJson(err))
   }
 })
 

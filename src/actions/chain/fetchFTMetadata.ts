@@ -5,13 +5,14 @@ import { DefaultNet } from '../../utils/networks'
 import { getContract, FungibleTokenMetadata } from '../../utils/contracts/FungibleToken'
 import { RootState } from '../../reducers'
 import { ftMetadataSelectors } from '../../reducers/ft_metadata'
+import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 const fetchFTMetadata = createAsyncThunk<
   FungibleTokenMetadata,
   string,
   {
     state: RootState
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >(
   'chain/fetchFTMetadata',
@@ -23,7 +24,7 @@ const fetchFTMetadata = createAsyncThunk<
     try {
       return await contract.ft_metadata()
     } catch (err) {
-      return rejectWithValue(err as Error)
+      return rejectWithValue(errorToJson(err))
     }
   },
   {

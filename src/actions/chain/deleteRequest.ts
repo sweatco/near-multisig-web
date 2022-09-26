@@ -3,7 +3,7 @@ import * as nearAPI from 'near-api-js'
 
 import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/contracts/MultiSig'
-import { getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
 import LedgerManager from '../../utils/LedgerManager'
 
 interface DeleteRequestArgs {
@@ -18,7 +18,7 @@ const deleteRequest = createAsyncThunk<
   string,
   DeleteRequestArgs,
   {
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >('chain/deleteRequest', async ({ key, ledgerManager, ledgerPath, contractId, requestId }, { rejectWithValue }) => {
   try {
@@ -27,8 +27,8 @@ const deleteRequest = createAsyncThunk<
     const contract = getContract(account, contractId)
 
     return await contract.delete_request({ request_id: requestId })
-  } catch (err) {
-    return rejectWithValue(err as Error)
+  } catch (err: any) {
+    return rejectWithValue(errorToJson(err))
   }
 })
 

@@ -16,13 +16,14 @@ import React, { FormEvent, useEffect, useState, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../hooks/useApp'
 import { contractSelectors } from '../../../reducers/contracts'
 import { contractsActions } from '../../../reducers/contracts/reducer'
+import { ErrorObject } from '../../../utils/chainHelpers'
 import { ledgerManager } from '../../../utils/LedgerManager'
 import { ConfirmTransactionOptions } from './ConfirmTransactionContext'
 
 interface ConfirmTransactionDialogProps extends Partial<ConfirmTransactionOptions> {
   open: boolean
   onResult(result: boolean): void
-  onFail(error: string): void
+  onFail(error: ErrorObject): void
   onClose(): void
 }
 

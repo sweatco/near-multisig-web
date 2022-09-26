@@ -4,6 +4,7 @@ import * as nearAPI from 'near-api-js'
 import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/contracts/FungibleToken'
 import { RootState } from '../../reducers'
+import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 export interface FetchFTBalanceArgs {
   tokenId: string
@@ -15,7 +16,7 @@ const fetchFTStorageBalance = createAsyncThunk<
   FetchFTBalanceArgs,
   {
     state: RootState
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >('chain/fetchFTStorageBalance', async ({ tokenId, accountId }, { rejectWithValue }) => {
   const near = await nearAPI.connect(DefaultNet)
@@ -26,7 +27,7 @@ const fetchFTStorageBalance = createAsyncThunk<
     const balance = await contract.storage_balance_of({ account_id: accountId })
     return balance != null
   } catch (err) {
-    return rejectWithValue(err as Error)
+    return rejectWithValue(errorToJson(err))
   }
 })
 

@@ -3,18 +3,13 @@ import * as nearAPI from 'near-api-js'
 
 import { DefaultNet } from '../../utils/networks'
 import { AccountView } from 'near-api-js/lib/providers/provider'
-import { ServerError } from 'near-api-js/lib/utils/rpc_errors'
-
-interface RejectType {
-  type: string
-  message: string
-}
+import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 const viewAccount = createAsyncThunk<
   AccountView,
   string,
   {
-    rejectValue: RejectType
+    rejectValue: ErrorObject
   }
 >('chain/viewAccount', async (accountId, { rejectWithValue }) => {
   const near = await nearAPI.connect(DefaultNet)
@@ -23,11 +18,7 @@ const viewAccount = createAsyncThunk<
   try {
     return await account.state()
   } catch (err) {
-    const serverError = err as ServerError
-    return rejectWithValue({
-      type: serverError.type,
-      message: serverError.message,
-    })
+    return rejectWithValue(errorToJson(err))
   }
 })
 

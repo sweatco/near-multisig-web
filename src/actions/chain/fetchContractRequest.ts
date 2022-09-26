@@ -3,6 +3,7 @@ import * as nearAPI from 'near-api-js'
 
 import { DefaultNet } from '../../utils/networks'
 import { getContract, MultiSigRequest } from '../../utils/contracts/MultiSig'
+import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 interface FetchContractRequestArgs {
   contractId: string
@@ -18,7 +19,7 @@ const fetchContractRequest = createAsyncThunk<
   FetchContractRequestResult,
   FetchContractRequestArgs,
   {
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >('chain/fetchContractRequest', async ({ contractId, requestId }, { rejectWithValue }) => {
   const near = await nearAPI.connect(DefaultNet)
@@ -32,7 +33,7 @@ const fetchContractRequest = createAsyncThunk<
     ])
     return { request, confirmations }
   } catch (err) {
-    return rejectWithValue(err as Error)
+    return rejectWithValue(errorToJson(err))
   }
 })
 

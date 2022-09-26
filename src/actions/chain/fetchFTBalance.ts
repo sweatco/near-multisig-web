@@ -6,6 +6,7 @@ import { getContract } from '../../utils/contracts/FungibleToken'
 import { RootState } from '../../reducers'
 import { ftBalancesSelectors } from '../../reducers/ft_balances'
 import { shallowEqual } from 'react-redux'
+import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 export interface FetchFTBalanceArgs {
   tokenId: string
@@ -20,7 +21,7 @@ const fetchFTBalance = createAsyncThunk<
   FetchFTBalanceArgs,
   {
     state: RootState
-    rejectValue: Error
+    rejectValue: ErrorObject
   }
 >(
   'chain/fetchFTBalance',
@@ -32,7 +33,7 @@ const fetchFTBalance = createAsyncThunk<
     try {
       return await contract.ft_balance_of({ account_id: accountId })
     } catch (err) {
-      return rejectWithValue(err as Error)
+      return rejectWithValue(errorToJson(err))
     }
   },
   {
