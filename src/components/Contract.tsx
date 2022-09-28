@@ -20,9 +20,10 @@ interface ContractProps {
 
 const Contract: React.FC<ContractProps> = memo(({ name }) => {
   const dispatch = useAppDispatch()
+
   const { confirmations, failed, remove, requestIds } = useContract(name)
   const requestDialog = useDialog(handleRequestDialogResult)
-  const ftDialog = useDialog(handleFTDialogResult)
+  const addFTDialog = useDialog(handleAddFTDialogResult)
   const ftList = useFTListSelector(name)
 
   return (
@@ -53,13 +54,7 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
             <ConfirmationsChip confirmations={confirmations} />
             <NearTokenChip contractId={name} withBalance={true} />
             {ftList.map((token) => (
-              <FungibleTokenChip
-                key={token}
-                tokenId={token}
-                contractId={name}
-                onDelete={() => handleDeleteFT(token)}
-                withBalance
-              />
+              <FungibleTokenChip key={token} tokenId={token} contractId={name} editable withBalance />
             ))}
             <IconButton color="secondary" size="small" sx={{ alignSelf: 'center' }} onClick={handleNewFT}>
               <Icon fontSize="inherit" className="material-symbols-outlined">
@@ -88,7 +83,7 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
       </Box>
 
       <RequestDialog contractId={name} open={requestDialog.open} onClose={requestDialog.closeDialog} />
-      <AddFungibleTokenDialog open={ftDialog.open} onClose={ftDialog.closeDialog} />
+      <AddFungibleTokenDialog open={addFTDialog.open} onClose={addFTDialog.closeDialog} />
     </Paper>
   )
 
@@ -97,20 +92,14 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
   }
 
   function handleNewFT() {
-    ftDialog.openDialog()
-  }
-
-  function handleDeleteFT(token: string) {
-    if (window.confirm(`Do you want to delete "${token}" from "${name}"`)) {
-      dispatch(ftListActions.deleteFungibleToken({ contractId: name, tokenId: token }))
-    }
+    addFTDialog.openDialog()
   }
 
   function handleRequestDialogResult(result?: boolean) {
     // skip result
   }
 
-  function handleFTDialogResult(result: string) {
+  function handleAddFTDialogResult(result: string) {
     dispatch(ftListActions.addFungibleToken({ contractId: name, tokenId: result }))
   }
 })
