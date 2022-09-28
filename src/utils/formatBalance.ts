@@ -4,9 +4,12 @@ import { FungibleTokenMetadata } from './contracts/FungibleToken'
 
 export const BN = BigNumber.clone({ DECIMAL_PLACES: 2, ROUNDING_MODE: BigNumber.ROUND_FLOOR })
 
+export const toFTBalance = (balance: string | BigNumber, metadata: FungibleTokenMetadata) => {
+  return BN(balance).dividedBy(new BN(10).pow(metadata.decimals))
+}
+
 const formatBalance = (balance: string | BigNumber, metadata: FungibleTokenMetadata) => {
-  const bn = new BN(balance)
-  return bn.dividedBy(new BN(10).pow(metadata.decimals)).toFormat()
+  return toFTBalance(balance, metadata).toFormat()
 }
 
 export const parseBalance = (balance: string, metadata: FungibleTokenMetadata) => {
