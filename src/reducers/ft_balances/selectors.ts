@@ -9,10 +9,7 @@ export const getFTBalances = (state: RootState) => getFTBalancesSlice(state).bal
 
 export const getRequests = (state: RootState) => getFTBalancesSlice(state).requests
 
-export const getAccountBalances = (state: RootState, accountId: string) => {
-  const balances = getFTBalances(state)
-  return balances[accountId]
-}
+export const getAccountBalances = (state: RootState, accountId: string) => getFTBalances(state)[accountId]
 
 export const makeAccountBalanceSelector = () => {
   const getAccountId = (_: any, accountId: string) => accountId
