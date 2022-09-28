@@ -29,7 +29,7 @@ export const getBalance = (state: RootState, contractId: string) => {
 
 export const getFailed = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
-  return metadata && 'failed' in metadata
+  return metadata && ('failed' in metadata || !metadata.num_confirmations || !metadata.request_ids)
 }
 
 export const getInvalidated = (state: RootState, contractId: string) => {

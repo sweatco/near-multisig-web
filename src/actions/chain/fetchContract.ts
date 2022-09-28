@@ -8,8 +8,8 @@ import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
 
 interface FetchContractResult {
   balance: AccountBalance
-  num_confirmations: number
-  request_ids: number[]
+  num_confirmation?: number
+  request_ids?: number[]
 }
 
 const fetchContract = createAsyncThunk<
@@ -26,8 +26,8 @@ const fetchContract = createAsyncThunk<
   try {
     const [balance, num_confirmations, request_ids] = await Promise.all([
       account.getAccountBalance(),
-      contract.get_num_confirmations(),
-      contract.list_request_ids(),
+      contract.get_num_confirmations().catch(() => undefined),
+      contract.list_request_ids().catch(() => undefined),
     ])
     return { balance, num_confirmations, request_ids }
   } catch (err) {

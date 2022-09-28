@@ -44,34 +44,30 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
         </IconButton>
       </Stack>
 
+      <Stack direction="row" spacing={1}>
+        <ConfirmationsChip confirmations={confirmations} />
+        <NearTokenChip contractId={name} withBalance={true} />
+        {ftList.map((token) => (
+          <FungibleTokenChip key={token} tokenId={token} contractId={name} editable withBalance />
+        ))}
+        <IconButton color="secondary" size="small" sx={{ alignSelf: 'center' }} onClick={handleNewFT}>
+          <Icon fontSize="inherit" className="material-symbols-outlined">
+            add_circle
+          </Icon>
+        </IconButton>
+      </Stack>
       {failed ? (
-        <>
-          <Alert severity="error">Unable to load contract!</Alert>
-        </>
+        <Box mt={2}>
+          <Alert severity="warning">Unable to load contract!</Alert>
+        </Box>
+      ) : requestIds !== undefined && requestIds.length > 0 ? (
+        <RequestsTable>
+          {requestIds.map((requestId) => (
+            <Request contractId={name} requestId={requestId} key={`${name}-${requestId}`} />
+          ))}
+        </RequestsTable>
       ) : (
-        <>
-          <Stack direction="row" spacing={1}>
-            <ConfirmationsChip confirmations={confirmations} />
-            <NearTokenChip contractId={name} withBalance={true} />
-            {ftList.map((token) => (
-              <FungibleTokenChip key={token} tokenId={token} contractId={name} editable withBalance />
-            ))}
-            <IconButton color="secondary" size="small" sx={{ alignSelf: 'center' }} onClick={handleNewFT}>
-              <Icon fontSize="inherit" className="material-symbols-outlined">
-                add_circle
-              </Icon>
-            </IconButton>
-          </Stack>
-          {requestIds !== undefined && requestIds.length > 0 ? (
-            <RequestsTable>
-              {requestIds.map((requestId) => (
-                <Request contractId={name} requestId={requestId} key={`${name}-${requestId}`} />
-              ))}
-            </RequestsTable>
-          ) : (
-            <Divider sx={{ marginTop: 2 }} />
-          )}
-        </>
+        <Divider sx={{ marginTop: 2 }} />
       )}
 
       <Box sx={{ display: 'flex', marginTop: 2 }}>

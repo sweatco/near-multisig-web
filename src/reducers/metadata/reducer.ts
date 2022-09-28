@@ -10,9 +10,9 @@ interface InvalidatedMetadata {
 }
 
 export interface Metadata extends InvalidatedMetadata {
-  num_confirmations: number
   balance: AccountBalance
-  request_ids: number[]
+  num_confirmations?: number
+  request_ids?: number[]
 }
 
 export interface MetadataFailed extends InvalidatedMetadata {
