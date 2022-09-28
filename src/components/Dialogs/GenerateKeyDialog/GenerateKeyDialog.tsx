@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, Icon, Tabs, Tab } from '@mui/material'
 import React, { useState } from 'react'
 import GenerateSeedPhrase from './GenerateSeedPhrase'
 import LedgerPublicKey from './LedgerPublicKey'
-import TabPanel from './TabPanel'
+import TabPanel from '../../Common/TabPanel'
 
 interface GenerateKeyDialogProps {
   open: boolean
