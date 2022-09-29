@@ -21,7 +21,7 @@ interface ContractProps {
 const Contract: React.FC<ContractProps> = memo(({ name }) => {
   const dispatch = useAppDispatch()
 
-  const { confirmations, failed, remove, requestIds } = useContract(name)
+  const { confirmations, balance, failed, remove, requestIds } = useContract(name)
   const requestDialog = useDialog(handleRequestDialogResult)
   const addFTDialog = useDialog(handleAddFTDialogResult)
   const ftList = useFTListSelector(name)
@@ -45,7 +45,9 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
       </Stack>
 
       <Stack direction="row" spacing={1}>
-        <ConfirmationsChip confirmations={confirmations} />
+        {balance === undefined || confirmations !== undefined ? (
+          <ConfirmationsChip confirmations={confirmations} />
+        ) : null}
         <NearTokenChip contractId={name} withBalance={true} />
         {ftList.map((token) => (
           <FungibleTokenChip key={token} tokenId={token} contractId={name} editable withBalance />
