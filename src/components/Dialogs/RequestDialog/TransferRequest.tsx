@@ -3,10 +3,7 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
   FormControl,
-  Icon,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -83,7 +80,6 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
 
   return (
     <form onSubmit={handleSubmit}>
-      <DialogTitle>New Request</DialogTitle>
       <DialogContent sx={{ mb: -3 }}>
         <Stack direction="row" spacing={2}>
           <Box flex={1}>

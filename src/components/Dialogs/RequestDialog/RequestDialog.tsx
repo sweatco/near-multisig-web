@@ -1,5 +1,6 @@
-import { Dialog } from '@mui/material'
-import React from 'react'
+import { Box, Dialog, DialogTitle, Tab, Tabs } from '@mui/material'
+import React, { SyntheticEvent, useState } from 'react'
+import TabPanel from '../../Common/TabPanel'
 import TransferRequest from './TransferRequest'
 
 interface RequestDialogProps {
@@ -9,21 +10,26 @@ interface RequestDialogProps {
 }
 
 const RequestDialog: React.FC<RequestDialogProps> = ({ contractId, onClose, open }) => {
+  const [value, setValue] = useState(0)
+
   return (
-    <Dialog
-      fullWidth
-      maxWidth="sm"
-      open={open}
-      onClose={handleClose}
-      TransitionProps={{
-        onEntered: handleDialogEnter,
-      }}>
-      <TransferRequest contractId={contractId} onClose={handleClose} />
+    <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
+      <Box sx={{ bgcolor: 'divider' }}>
+        <DialogTitle>New Request</DialogTitle>
+
+        <Tabs value={value} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
+          <Tab label="Transfer" />
+        </Tabs>
+      </Box>
+
+      <TabPanel value={value} index={0}>
+        <TransferRequest contractId={contractId} onClose={handleClose} />
+      </TabPanel>
     </Dialog>
   )
 
-  function handleDialogEnter() {
-    //
+  function handleTabChange(event: SyntheticEvent, newValue: number) {
+    setValue(newValue)
   }
 
   function handleClose() {
