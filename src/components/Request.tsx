@@ -3,7 +3,7 @@ import React, { memo, useEffect } from 'react'
 import { useSnackbar } from 'notistack'
 
 import useRequest from '../hooks/useRequest'
-import { useAppDispatch, useAppSelector } from '../hooks/useApp'
+import { useAppDispatch, useAppSelector, useAppStore } from '../hooks/useApp'
 import { ftListActions } from '../reducers/ft_list/reducer'
 import { metadataSelectors } from '../reducers/metadata'
 import RequestAction from './RequestAction'
@@ -13,6 +13,7 @@ import deleteRequest from '../actions/chain/deleteRequest'
 import { getReceiverList, humanifyActions, isFungibleTokenRequest } from '../utils/multisigHelpers'
 import fetchFTBalance from '../actions/chain/fetchFTBalance'
 import { DefaultNet } from '../utils/networks'
+import { ftListSelectors } from '../reducers/ft_list'
 
 interface RequestProps {
   contractId: string
@@ -20,9 +21,10 @@ interface RequestProps {
 }
 
 const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
-  const contractConfirmations = useAppSelector((state) => metadataSelectors.getNumConfirmations(state, contractId))
-
+  const store = useAppStore()
   const dispatch = useAppDispatch()
+
+  const contractConfirmations = useAppSelector((state) => metadataSelectors.getNumConfirmations(state, contractId))
   const confirmTransaction = useConfirmTransaction()
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
   const { request, confirmations } = useRequest(contractId, requestId)
@@ -75,11 +77,20 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
 
   async function handleConfirm() {
     function checkResult(result: ConfirmRequestResult) {
-      if (isFungibleToken && request && result.value === '') {
-        dispatch(fetchFTBalance({ tokenId: request.receiver_id, accountId: contractId, force: true }))
+      if (request === undefined || confirmations === undefined || contractConfirmations === undefined) {
+        return false
       }
 
-      if (result.value === '') {
+      const isLastConfirmation = confirmations.length === contractConfirmations - 1
+      const tokenId = isFungibleToken
+        ? request.receiver_id
+        : ftListSelectors.makeGetLockupTokenIdSelector()(store.getState(), contractId, request.receiver_id)
+
+      if (tokenId && isLastConfirmation) {
+        dispatch(fetchFTBalance({ accountId: contractId, tokenId, force: true }))
+      }
+
+      if (isLastConfirmation) {
         setTimeout(() => {
           enqueueSnackbar('Confirmation details', {
             variant: 'default',
@@ -107,7 +118,7 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
         }, 500)
       }
 
-      return typeof result.value === 'string' ? true : result.value
+      return typeof result.value === 'boolean' ? result.value : true
     }
 
     try {

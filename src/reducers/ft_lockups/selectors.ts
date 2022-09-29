@@ -13,7 +13,7 @@ export const makeLockupsSelector = () => {
   const getTokenId = (_: any, __: any, tokenId: string) => tokenId
   const getLockupId = (_: any, __: any, ___: any, lockupId: string) => lockupId
 
-  const lockupsSelector = createSelector(
+  return createSelector(
     getFTLockups,
     getContractId,
     getTokenId,
@@ -22,7 +22,10 @@ export const makeLockupsSelector = () => {
       return ((lockups[contractId] ?? {})[tokenId] ?? {})[lockupId]
     }
   )
+}
 
+export const makeAggregatedSelector = () => {
+  const lockupsSelector = makeLockupsSelector()
   return createSelector(lockupsSelector, (lockups) => {
     if (!lockups || Object.values(lockups).length === 0) {
       return

@@ -35,7 +35,7 @@ const confirmRequest = createAsyncThunk<
       contractId: contractId,
       methodName: 'confirm',
       args: { request_id: requestId },
-      gas: parseTgas(250),
+      gas: parseTgas(300),
     })
 
     const value = getTransactionLastResult(rawResult)

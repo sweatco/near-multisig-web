@@ -3,7 +3,7 @@ import fetchLockup from '../../actions/chain/fetchLockup'
 import { Lockup } from '../../utils/contracts/Lockup'
 
 interface LockupMap {
-  [lockupIndex: number]: Lockup
+  [lockupIndex: string]: Lockup
 }
 
 interface FTLockupsState {

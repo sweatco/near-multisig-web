@@ -9,16 +9,21 @@ const useLockup = (contractId: string, tokenId: string, lockupId: string) => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const lockupsSelector = useMemo(ftLockupsSelectors.makeLockupsSelector, [])
-  const lockup = useAppSelector((state) => lockupsSelector(state, contractId, tokenId, lockupId))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const aggregatedLockupsSelector = useMemo(ftLockupsSelectors.makeAggregatedSelector, [])
+
+  const lockups = useAppSelector((state) => lockupsSelector(state, contractId, tokenId, lockupId))
+  const aggregatedLockup = useAppSelector((state) => aggregatedLockupsSelector(state, contractId, tokenId, lockupId))
 
   useEffect(() => {
     dispatch(fetchLockup({ contractId, tokenId, lockupId }))
   }, [dispatch, contractId, tokenId, lockupId])
 
-  if (lockup) {
+  if (aggregatedLockup && lockups) {
     return {
-      unclaimed: lockup.unclaimed_balance,
-      total: lockup.total_balance.minus(lockup.claimed_balance),
+      unclaimed: aggregatedLockup.unclaimed_balance,
+      total: aggregatedLockup.total_balance.minus(aggregatedLockup.claimed_balance),
+      lockups,
     }
   }
 }

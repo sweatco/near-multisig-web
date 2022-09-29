@@ -22,3 +22,15 @@ export const makeLockupListSelector = () => {
     return (lockups[contractId] ?? {})[tokenId] ?? []
   })
 }
+
+export const makeGetLockupTokenIdSelector = () => {
+  const getContractId = (_: any, contractId: string) => contractId
+  const getLockupId = (_: any, __: any, lockupId: string) => lockupId
+
+  return createSelector(getFTLockups, getContractId, getLockupId, (lockups, contractId, lockupId) => {
+    const contract = lockups[contractId] ?? {}
+    return Object.keys(contract).find((tokenId) => {
+      return contract[tokenId].includes(lockupId)
+    })
+  })
+}

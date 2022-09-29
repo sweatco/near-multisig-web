@@ -11,12 +11,15 @@ import {
   Typography,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import addRequest from '../../actions/chain/addRequest'
 import { useAppDispatch } from '../../hooks/useApp'
 import useFTMetadata from '../../hooks/useFTMetadata'
 import useLockupList from '../../hooks/useLockupList'
 import { ftListActions } from '../../reducers/ft_list/reducer'
+import { parseTgas } from '../../utils/formatBalance'
 import FungibleTokenChip from '../Chips/FungibleTokenChip'
 import LockupBalance from '../Common/LockupBalance'
+import useConfirmTransaction from './ConfirmTransaction/useConfirmTransaction'
 
 interface FTDialogProps {
   contractId: string
@@ -33,6 +36,8 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
   const metadata = useFTMetadata(tokenId)
   const lockupList = useLockupList(contractId, tokenId)
 
+  const confirmTransaction = useConfirmTransaction()
+
   useEffect(() => {
     if (props.open) {
       setAddress('')
@@ -45,9 +50,12 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
         {metadata?.name} ({tokenId})
       </DialogTitle>
       <DialogContent>
-        <Box>
+        <Typography component="div" mb={1}>
+          Account: <strong>{contractId}</strong>
+        </Typography>
+        <Typography component="div">
           Balance: <FungibleTokenChip contractId={contractId} tokenId={tokenId} withBalance />
-        </Box>
+        </Typography>
         <Typography variant="h5" mt={2}>
           Lockups:
         </Typography>
@@ -116,8 +124,39 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
     }
   }
 
-  function handleClaimLockup(lockupId: string) {
-    //
+  async function handleClaimLockup(lockupId: string, claimId?: string, claimAmount?: string) {
+    function getRequest() {
+      return {
+        receiver_id: lockupId,
+        actions: [
+          {
+            type: 'FunctionCall',
+            gas: parseTgas(100),
+            method_name: 'claim',
+            args: Buffer.from(
+              JSON.stringify(claimId && claimAmount ? { amounts: [[parseInt(claimId), claimAmount]] } : {})
+            ).toString('base64'),
+            deposit: '0',
+          },
+        ],
+      }
+    }
+
+    try {
+      await confirmTransaction({
+        contractId,
+        onConfirmWithKey: async (key) => {
+          const result = await dispatch(addRequest({ key, contractId, request: getRequest(), tgas: 50 })).unwrap()
+          return typeof result === 'number'
+        },
+        onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
+          const result = await dispatch(
+            addRequest({ ledgerManager, ledgerPath, contractId, request: getRequest(), tgas: 50 })
+          ).unwrap()
+          return typeof result === 'number'
+        },
+      })
+    } catch (e) {}
   }
 }
 
