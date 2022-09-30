@@ -16,10 +16,9 @@ export const contractsSlice = createSlice({
   name: 'contracts',
   initialState: { contracts: [], ledger: {} } as ContractsState,
   reducers: {
-    addContract(state, action: PayloadAction<string>) {
-      if (!state.contracts.includes(action.payload)) {
-        state.contracts.unshift(action.payload)
-      }
+    addContract(state, action: PayloadAction<string[]>) {
+      const contractsToAdd = action.payload.filter((contractId) => !state.contracts.includes(contractId))
+      state.contracts = contractsToAdd.concat(state.contracts)
     },
     removeContract(state, action: PayloadAction<string>) {
       state.contracts = state.contracts.filter((id) => id !== action.payload)

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react'
-import { Box, Button } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { Box, List } from '@mui/material'
 
 import AddContractDialog from './components/Dialogs/AddContractDialog'
 import GenerateKeyDialog from './components/Dialogs/GenerateKeyDialog'
@@ -9,46 +9,87 @@ import { useAppDispatch, useAppSelector } from './hooks/useApp'
 import { contractSelectors } from './reducers/contracts'
 import Contract from './components/Contract'
 import { useDialog } from './hooks/useDialog'
+import ContractMenuItem from './components/ContractMenuItem'
+import DrawerWrapper, { DrawerAction } from './components/DrawerWrapper'
+
+const drawerWidth = 320
 
 const App = createAppComponent(() => {
-  const { open, openDialog, closeDialog } = useDialog(handleDialogResult)
-  const { open: keyOpen, openDialog: openKeyDialog, closeDialog: closeKeyDialog } = useDialog(handleDialogResult)
+  const addDialog = useDialog(handleAddDialogResult)
+  const keyDialog = useDialog(handleKeyDialogResult)
   const dispatch = useAppDispatch()
 
   const contracts = useAppSelector(contractSelectors.getContracts)
-  const contractIdFromHash = window.location.hash?.slice(1)
-  const sortedContracts = useMemo(() => {
-    if (contractIdFromHash && contractIdFromHash.length > 0) {
-      const contractIndex = contracts.indexOf(contractIdFromHash)
-      if (contractIndex !== -1) {
-        return [contractIdFromHash].concat(contracts.filter((id) => id !== contractIdFromHash))
-      }
-    }
-    return contracts
-  }, [contracts, contractIdFromHash])
+  const contractIdsFromHash = useRef(getContractsFromHash())
+
+  const [selectedContract, setSelectedContract] = useState(contractIdsFromHash.current[0] ?? contracts[0])
 
   useEffect(() => {
-    if (contractIdFromHash && contractIdFromHash.length > 0) {
-      dispatch(contractsActions.addContract(contractIdFromHash))
+    if (!contracts.includes(selectedContract) && selectedContract !== contractIdsFromHash.current[0]) {
+      setSelectedContract(contracts[0])
     }
-  }, [dispatch, contractIdFromHash])
+  }, [contracts, selectedContract])
+
+  useEffect(() => {
+    if (contractIdsFromHash.current.length > 0) {
+      dispatch(contractsActions.addContract(contractIdsFromHash.current))
+      contractIdsFromHash.current = []
+    }
+  }, [dispatch])
 
   return (
-    <>
-      <Box sx={{ p: 2 }}>
-        <Button onClick={openDialog}>Add multisig contract</Button>
-        <Button onClick={openKeyDialog}>Generate Key</Button>
-        {sortedContracts.map((contract) => (
-          <Contract name={contract} key={contract} />
-        ))}
+    <Box sx={{ display: 'flex' }}>
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
+        <DrawerWrapper drawerWidth={drawerWidth} onAction={handleAction}>
+          <List>
+            {contracts.map((contractId) => (
+              <ContractMenuItem
+                key={contractId}
+                contractId={contractId}
+                selected={contractId === selectedContract}
+                onClick={() => setSelectedContract(contractId)}
+              />
+            ))}
+          </List>
+        </DrawerWrapper>
       </Box>
-      <AddContractDialog open={open} onClose={closeDialog} />
-      <GenerateKeyDialog open={keyOpen} onClose={closeKeyDialog} />
-    </>
+      <Box component="main" sx={{ flexGrow: 1, p: 2, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
+        {selectedContract ? <Contract name={selectedContract} /> : null}
+      </Box>
+      <AddContractDialog open={addDialog.open} onClose={addDialog.closeDialog} />
+      <GenerateKeyDialog open={keyDialog.open} onClose={keyDialog.closeDialog} />
+    </Box>
   )
 
-  function handleDialogResult(result: string) {
-    dispatch(contractsActions.addContract(result))
+  function getContractsFromHash() {
+    const contract = window.location.hash?.slice(1)
+    if (contract && contract.length > 0) {
+      return contract
+        .replaceAll(/[^a-z0-9.,_-]/gi, '')
+        .toLocaleLowerCase()
+        .split(',')
+    }
+    return []
+  }
+
+  function handleAction(drawerAction: DrawerAction) {
+    switch (drawerAction) {
+      case DrawerAction.addContract:
+        addDialog.openDialog()
+        break
+      case DrawerAction.generateKey:
+        keyDialog.openDialog()
+        break
+    }
+  }
+
+  function handleAddDialogResult(result: string) {
+    dispatch(contractsActions.addContract([result.toLocaleLowerCase()]))
+    setSelectedContract(result)
+  }
+
+  function handleKeyDialogResult(result: string) {
+    //
   }
 })
 

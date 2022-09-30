@@ -27,7 +27,7 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
   const ftList = useFTListSelector(name)
 
   return (
-    <Paper sx={{ p: 3, marginTop: 2 }}>
+    <Paper sx={{ p: 3 }}>
       <Stack direction="row">
         <Box sx={{ flex: 1 }}>
           <StyledTypography variant="h5" gutterBottom sx={{ flex: 1 }}>
