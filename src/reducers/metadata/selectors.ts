@@ -8,34 +8,25 @@ export const getMetadata = (state: RootState, contractId: string) => getMetadata
 
 export const getRequestIds = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
-  if (metadata && 'request_ids' in metadata) {
-    return metadata.request_ids
-  }
+  return metadata?.request_ids
 }
 
 export const getNumConfirmations = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
-  if (metadata && 'num_confirmations' in metadata) {
-    return metadata.num_confirmations
-  }
+  return metadata?.num_confirmations
 }
 
 export const getBalance = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
-  if (metadata && 'balance' in metadata) {
-    return metadata.balance
-  }
+  return metadata?.balance
 }
 
 export const getFailed = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
-  return metadata && ('failed' in metadata || !metadata.num_confirmations || !metadata.request_ids)
+  return metadata?.failed || !metadata?.request_ids
 }
 
 export const getInvalidated = (state: RootState, contractId: string) => {
   const metadata = getMetadata(state, contractId)
-  if (metadata && 'invalidated' in metadata) {
-    return metadata.invalidated
-  }
-  return false
+  return metadata?.invalidated ?? false
 }
