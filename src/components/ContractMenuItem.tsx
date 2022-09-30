@@ -17,7 +17,10 @@ const ContractMenuItem: React.FC<ContractMenuItemProps> = ({ contractId, selecte
         {requestIds && requestIds.length > 0 ? (
           <StyledBadge badgeContent={requestIds.length} color="info" sx={{ mr: 1 }} />
         ) : null}
-        <ListItemText primary={contractId} />
+        <ListItemText
+          primary={contractId}
+          primaryTypographyProps={{ sx: { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+        />
       </ListItemButton>
     </ListItem>
   )
