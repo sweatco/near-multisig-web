@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, List } from '@mui/material'
+import { useLocation } from 'react-router-dom'
 
 import AddContractDialog from './components/Dialogs/AddContractDialog'
 import GenerateKeyDialog from './components/Dialogs/GenerateKeyDialog'
@@ -18,24 +19,27 @@ const App = createAppComponent(() => {
   const addDialog = useDialog(handleAddDialogResult)
   const keyDialog = useDialog(handleKeyDialogResult)
   const dispatch = useAppDispatch()
+  const location = useLocation()
 
   const contracts = useAppSelector(contractSelectors.getContracts)
-  const contractIdsFromHash = useRef(getContractsFromHash())
+  const [selectedContract, setSelectedContract] = useState(contracts[0])
 
-  const [selectedContract, setSelectedContract] = useState(contractIdsFromHash.current[0] ?? contracts[0])
-
+  // Watch state and add new contracts
   useEffect(() => {
-    if (!contracts.includes(selectedContract) && selectedContract !== contractIdsFromHash.current[0]) {
+    const contracts = getContractsFromHash(location.hash)
+    if (contracts.length > 0) {
+      dispatch(contractsActions.addContract(contracts))
+      setSelectedContract(contracts[0])
+      window.location.hash = ''
+    }
+  }, [dispatch, location])
+
+  // Helps to switch to another contract whet selected got deleted
+  useEffect(() => {
+    if (!contracts.includes(selectedContract)) {
       setSelectedContract(contracts[0])
     }
   }, [contracts, selectedContract])
-
-  useEffect(() => {
-    if (contractIdsFromHash.current.length > 0) {
-      dispatch(contractsActions.addContract(contractIdsFromHash.current))
-      contractIdsFromHash.current = []
-    }
-  }, [dispatch])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -61,10 +65,10 @@ const App = createAppComponent(() => {
     </Box>
   )
 
-  function getContractsFromHash() {
-    const contract = window.location.hash?.slice(1)
-    if (contract && contract.length > 0) {
-      return contract
+  function getContractsFromHash(hash: string) {
+    const contracts = hash.slice(1)
+    if (contracts.length > 0) {
+      return contracts
         .replaceAll(/[^a-z0-9.,_-]/gi, '')
         .toLocaleLowerCase()
         .split(',')
