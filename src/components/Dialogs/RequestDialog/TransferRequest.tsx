@@ -14,7 +14,7 @@ import {
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useMemo } from 'react'
 
-import addRequest from '../../../actions/chain/addRequest'
+import addRequest, { AddRequestResult } from '../../../actions/chain/addRequest'
 import viewAccount from '../../../actions/chain/viewAccount'
 import { useAppDispatch } from '../../../hooks/useApp'
 import useBalance from '../../../hooks/useBalance'
@@ -26,6 +26,7 @@ import useConfirmTransaction from '../ConfirmTransaction/useConfirmTransaction'
 import { parseNearAmount } from 'near-api-js/lib/utils/format'
 import useFTMetadata from '../../../hooks/useFTMetadata'
 import fetchFTStorageBalance from '../../../actions/chain/fetchFTStorageBalance'
+import fetchFTBalance from '../../../actions/chain/fetchFTBalance'
 
 interface TransferRequestProps {
   contractId: string
@@ -189,6 +190,14 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
   }
 
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
+    function checkResult(result: AddRequestResult) {
+      if (typeof result.value !== 'number') {
+        ftList.forEach((tokenId) => {
+          dispatch(fetchFTBalance({ accountId: contractId, tokenId, force: true }))
+        })
+      }
+    }
+
     event?.preventDefault()
     try {
       if (
@@ -198,13 +207,15 @@ const TransferRequest: React.FC<TransferRequestProps> = ({ contractId, onClose }
             const result = await dispatch(
               addRequest({ key, contractId: contractId, request: await getRequest(), tgas: 50 })
             ).unwrap()
-            return typeof result === 'number'
+            checkResult(result)
+            return result.value != null
           },
           onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
             const result = await dispatch(
               addRequest({ ledgerManager, ledgerPath, contractId, request: await getRequest(), tgas: 50 })
             ).unwrap()
-            return typeof result === 'number'
+            checkResult(result)
+            return result.value != null
           },
         })
       ) {

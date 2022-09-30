@@ -17,9 +17,7 @@ export const parseBalance = (balance: string, metadata: FungibleTokenMetadata) =
 }
 
 export const parseTgas = (tgas: number) => {
-  if (tgas) {
-    return BN(tgas).multipliedBy(new BN(10).pow(12)).toFixed()
-  }
+  return BN(tgas).multipliedBy(new BN(10).pow(12)).toFixed()
 }
 
 export const toNearBalance = (balance: string | BigNumber) => {

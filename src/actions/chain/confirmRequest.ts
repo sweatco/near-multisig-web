@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import * as nearAPI from 'near-api-js'
+import BN from 'bn.js'
 
 import { DefaultNet } from '../../utils/networks'
 import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
@@ -35,7 +36,7 @@ const confirmRequest = createAsyncThunk<
       contractId: contractId,
       methodName: 'confirm',
       args: { request_id: requestId },
-      gas: parseTgas(300),
+      gas: new BN(parseTgas(300)!),
     })
 
     const value = getTransactionLastResult(rawResult)

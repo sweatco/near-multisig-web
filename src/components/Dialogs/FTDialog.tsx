@@ -1,7 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import addRequest from '../../actions/chain/addRequest'
+import addRequest, { AddRequestResult } from '../../actions/chain/addRequest'
+import fetchFTBalance from '../../actions/chain/fetchFTBalance'
 import { useAppDispatch } from '../../hooks/useApp'
+import useFTListSelector from '../../hooks/useFTListSelector'
 import useFTMetadata from '../../hooks/useFTMetadata'
 import useLockupList from '../../hooks/useLockupList'
 import { ftListActions } from '../../reducers/ft_list/reducer'
@@ -23,6 +25,7 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
 
   const dispatch = useAppDispatch()
   const metadata = useFTMetadata(tokenId)
+  const ftList = useFTListSelector(contractId)
   const lockupList = useLockupList(contractId, tokenId)
 
   const confirmTransaction = useConfirmTransaction()
@@ -114,6 +117,14 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
   }
 
   async function handleClaimLockup(lockupId: string, claimId?: string, claimAmount?: string) {
+    function checkResult(result: AddRequestResult) {
+      if (typeof result.value !== 'number') {
+        ftList.forEach((tokenId) => {
+          dispatch(fetchFTBalance({ accountId: contractId, tokenId, force: true }))
+        })
+      }
+    }
+
     function getRequest() {
       return {
         receiver_id: lockupId,
@@ -136,13 +147,15 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
         contractId,
         onConfirmWithKey: async (key) => {
           const result = await dispatch(addRequest({ key, contractId, request: getRequest(), tgas: 50 })).unwrap()
-          return typeof result === 'number'
+          checkResult(result)
+          return result.value != null
         },
         onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
           const result = await dispatch(
             addRequest({ ledgerManager, ledgerPath, contractId, request: getRequest(), tgas: 50 })
           ).unwrap()
-          return typeof result === 'number'
+          checkResult(result)
+          return result.value != null
         },
       })
     } catch (e) {}
