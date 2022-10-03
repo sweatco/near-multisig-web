@@ -93,6 +93,19 @@ const RequestAction: React.FC<RequestActionProps> = ({ contractId, request, acti
           variant="filled"
         />
       )
+    } else if (action.type === 'FunctionCall' && action.method_name === 'burn') {
+      const args: { amount: string } = base64ToJson(action.args)
+      const amount = BN(args.amount)
+      return (
+        <FungibleTokenChip
+          onClick={handleClick}
+          contractId={contractId}
+          tokenId={request.receiver_id}
+          prefix={'Burn:'}
+          amount={amount}
+          variant="filled"
+        />
+      )
     } else {
       return <Chip icon={<Icon>{getChipIcon()}</Icon>} label={label} onClick={handleClick} />
     }
