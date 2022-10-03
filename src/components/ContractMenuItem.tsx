@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import { Badge, ListItem, ListItemButton, ListItemText } from '@mui/material'
-import React from 'react'
+import React, { MouseEvent } from 'react'
 import useContractRequestList from '../hooks/useContractRequestList'
 
 interface ContractMenuItemProps {
   contractId: string
   selected: boolean
-  onClick(): void
+  onClick(event: MouseEvent<HTMLDivElement>): void
 }
 
 const ContractMenuItem: React.FC<ContractMenuItemProps> = ({ contractId, selected, onClick }) => {
