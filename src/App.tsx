@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { Box, List } from '@mui/material'
 import { useLocation } from 'react-router-dom'
 
@@ -23,27 +23,41 @@ const App = createAppComponent(() => {
   const location = useLocation()
 
   const contracts = useAppSelector(contractSelectors.getContracts)
-  const [selectedContracts, setSelectedContracts] = useState<string[]>(getContractsFromHash(location.hash))
-  const selectContractFn = useCallback(selectContract, [location])
+  const selectedContracts = useMemo(() => getContractsFromHash(location.hash), [location.hash])
 
-  // Watch state and add new contracts
+  const contractsRef = useRef<string[]>()
   useEffect(() => {
-    const contracts = getContractsFromHash(location.hash)
-    if (contracts.length > 0) {
-      dispatch(contractsActions.addContract(contracts))
-      setSelectedContracts(contracts)
+    if (contractsRef.current && selectedContractsRef.current) {
+      const newSelectedContracts = selectedContractsRef.current.filter((contractId) => contracts.includes(contractId))
+      if (newSelectedContracts.length !== selectedContractsRef.current.length) {
+        if (newSelectedContracts.length === 0) {
+          selectContracts([contracts[0]])
+        } else {
+          selectContracts(newSelectedContracts)
+        }
+      }
     }
-  }, [dispatch, location])
 
-  // Helps to switch to another contract when selected got deleted
+    contractsRef.current = contracts
+  }, [contracts])
+
+  const selectedContractsRef = useRef<string[]>()
   useEffect(() => {
-    const filteredSelectedContracts = selectedContracts.filter((contractId) => contracts.includes(contractId))
-    if (filteredSelectedContracts.length === 0) {
-      selectContractFn(contracts[0])
-    } else if (filteredSelectedContracts.length !== selectedContracts.length) {
-      selectContracts(filteredSelectedContracts)
+    const newContracts = selectedContracts.filter(
+      (contractId) => contractsRef.current && !contractsRef.current.includes(contractId)
+    )
+    if (newContracts.length > 0) {
+      dispatch(contractsActions.addContract(newContracts))
     }
-  }, [contracts, selectContractFn, selectedContracts])
+
+    if (selectedContracts.length === 0 && contractsRef.current && contractsRef.current.length > 0) {
+      selectContracts([contractsRef.current[0]])
+    }
+
+    selectedContractsRef.current = selectedContracts
+  }, [selectedContracts, dispatch])
+
+  const contractsToShow = contracts.filter((contractId) => selectedContracts.includes(contractId))
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -63,7 +77,7 @@ const App = createAppComponent(() => {
       </Box>
       <Box component="main" sx={{ flexGrow: 1, p: 2, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <Stack spacing={1}>
-          {selectedContracts.map((contractId) => (
+          {contractsToShow.map((contractId) => (
             <Contract key={contractId} name={contractId} />
           ))}
         </Stack>
@@ -105,6 +119,8 @@ const App = createAppComponent(() => {
       const contracts = getContractsFromHash(location.hash)
       if (!contracts.includes(contractId)) {
         selectContracts(contracts.concat(contractId))
+      } else {
+        selectContracts(contracts.filter((cid) => cid !== contractId))
       }
     } else {
       selectContracts([contractId])
