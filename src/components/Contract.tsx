@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Divider, Icon, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
+import { Alert, Box, Button, Divider, Icon, IconButton, Paper, Stack, Typography } from '@mui/material'
 import React, { memo } from 'react'
 
 import ConfirmationsChip from './Chips/ConfirmationsChip'
@@ -28,15 +28,10 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Stack direction="row">
-        <Box sx={{ flex: 1 }}>
-          <StyledTypography variant="h5" gutterBottom sx={{ flex: 1 }}>
-            @{name}{' '}
-            <StyledLink href={`#${name}`} underline="none">
-              #
-            </StyledLink>
-          </StyledTypography>
-        </Box>
+      <Stack direction="row" alignItems="center" mb={0.5}>
+        <Typography variant="h5" sx={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', mr: 2 }}>
+          @{name}
+        </Typography>
         <IconButton color="error" onClick={remove}>
           <Icon fontSize="inherit" className="material-symbols-outlined">
             delete
@@ -101,15 +96,5 @@ const Contract: React.FC<ContractProps> = memo(({ name }) => {
     dispatch(ftListActions.addFungibleToken({ contractId: name, tokenId: result }))
   }
 })
-
-const StyledLink = styled(Link)`
-  display: none;
-`
-
-const StyledTypography = styled(Typography)`
-  :hover ${StyledLink} {
-    display: inline;
-  }
-`
 
 export default Contract

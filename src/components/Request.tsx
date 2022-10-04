@@ -46,7 +46,7 @@ const Request: React.FC<RequestProps> = memo(({ contractId, requestId }) => {
       <TableRow>
         <TableCell>{requestId}</TableCell>
         <TableCell>
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" rowGap={1} columnGap={1} flexWrap="wrap">
             {request &&
               humanActions.map((action, index) => (
                 <RequestAction key={index} action={action} request={request} contractId={contractId} />

@@ -42,7 +42,7 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
         {metadata?.name} ({tokenId})
       </DialogTitle>
       <DialogContent>
-        <Typography component="div" mb={1}>
+        <Typography component="div" mb={1} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           Account: <strong>{contractId}</strong>
         </Typography>
         <Typography component="div">
