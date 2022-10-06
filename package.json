@@ -34,7 +34,7 @@
     "redux-persist": "^6.0.0",
     "stream-browserify": "^3.0.0",
     "typescript": "^4.8.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^3.0.3"
   },
   "scripts": {
     "start": "react-app-rewired start",
