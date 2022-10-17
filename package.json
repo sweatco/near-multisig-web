@@ -21,7 +21,7 @@
     "clipboard": "^2.0.11",
     "crypto-browserify": "^3.12.0",
     "customize-cra": "^1.0.0",
-    "minimist": "^1.2.6",
+    "minimist": "^1.2.7",
     "near-api-js": "^0.44.2",
     "near-ledger-js": "^0.2.1",
     "near-seed-phrase": "^0.2.0",
