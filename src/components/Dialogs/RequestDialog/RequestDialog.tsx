@@ -1,6 +1,7 @@
 import { Box, Dialog, DialogTitle, Tab, Tabs } from '@mui/material'
 import React, { SyntheticEvent, useState } from 'react'
 import TabPanel from '../../Common/TabPanel'
+import TakeOverRequest from './TakeOverRequest'
 import TransferRequest from './TransferRequest'
 
 interface RequestDialogProps {
@@ -19,11 +20,15 @@ const RequestDialog: React.FC<RequestDialogProps> = ({ contractId, onClose, open
 
         <Tabs value={value} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
           <Tab label="Transfer" />
+          <Tab label="Take Over" />
         </Tabs>
       </Box>
 
       <TabPanel value={value} index={0}>
         <TransferRequest contractId={contractId} onClose={handleClose} />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <TakeOverRequest contractId={contractId} onClose={handleClose} />
       </TabPanel>
     </Dialog>
   )
