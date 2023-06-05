@@ -22,7 +22,7 @@
     "crypto-browserify": "^3.12.0",
     "customize-cra": "^1.0.0",
     "minimist": "^1.2.6",
-    "near-api-js": "^0.44.2",
+    "near-api-js": "^2.1.4",
     "near-ledger-js": "^0.2.1",
     "near-seed-phrase": "^0.2.0",
     "notistack": "^2.0.5",
