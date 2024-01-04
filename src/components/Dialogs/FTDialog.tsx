@@ -11,6 +11,8 @@ import { parseTgas } from '../../utils/formatBalance'
 import FungibleTokenChip from '../Chips/FungibleTokenChip'
 import LockupBalance from '../Common/LockupBalance'
 import useConfirmTransaction from './ConfirmTransaction/useConfirmTransaction'
+import useFTStorage from '../../hooks/useFTStorage'
+import { parseNearAmount } from 'near-api-js/lib/utils/format'
 
 interface FTDialogProps {
   contractId: string
@@ -20,11 +22,12 @@ interface FTDialogProps {
 }
 
 const FTDialog: React.FC<FTDialogProps> = (props) => {
-  const { contractId, tokenId } = props
+  const { contractId /* Account */, tokenId /* FT Token */ } = props
   const [address, setAddress] = useState('')
 
   const dispatch = useAppDispatch()
   const metadata = useFTMetadata(tokenId)
+  const storage = useFTStorage(tokenId, contractId)
   const ftList = useFTListSelector(contractId)
   const lockupList = useLockupList(contractId, tokenId)
 
@@ -84,6 +87,7 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancel}>Close</Button>
+        {storage === false ? <Button onClick={handleRegisterAccount}>Register</Button> : undefined}
         <Button color="error" onClick={handleDeleteFT}>
           Delete
         </Button>
@@ -102,6 +106,38 @@ const FTDialog: React.FC<FTDialogProps> = (props) => {
 
   function handleCancel() {
     props.onClose()
+  }
+
+  async function handleRegisterAccount() {
+    function getRequest() {
+      return {
+        receiver_id: tokenId,
+        actions: [
+          {
+            type: 'FunctionCall',
+            gas: parseTgas(10),
+            method_name: 'storage_deposit',
+            args: Buffer.from(JSON.stringify({ account_id: contractId, registration_only: true })).toString('base64'),
+            deposit: parseNearAmount('0.0009'),
+          },
+        ],
+      }
+    }
+    try {
+      await confirmTransaction({
+        contractId,
+        onConfirmWithKey: async (key) => {
+          const result = await dispatch(addRequest({ key, contractId, request: getRequest(), tgas: 50 })).unwrap()
+          return result.value != null
+        },
+        onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
+          const result = await dispatch(
+            addRequest({ ledgerManager, ledgerPath, contractId, request: getRequest(), tgas: 50 })
+          ).unwrap()
+          return result.value != null
+        },
+      })
+    } catch (e) {}
   }
 
   function handleDeleteFT() {
