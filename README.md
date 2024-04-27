@@ -1,4 +1,4 @@
-# Getting Started with Multisig
+# Getting Started with Multisig 
 
 ### How to Multisig (X/Y) existing account 
 
