@@ -3,6 +3,7 @@ import React, { SyntheticEvent, useState } from 'react'
 import TabPanel from '../../Common/TabPanel'
 import TakeOverRequest from './TakeOverRequest'
 import TransferRequest from './TransferRequest'
+import BridgeToEth from './BridgeToEth'
 
 interface RequestDialogProps {
   contractId: string
@@ -21,6 +22,7 @@ const RequestDialog: React.FC<RequestDialogProps> = ({ contractId, onClose, open
         <Tabs value={value} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
           <Tab label="Transfer" />
           <Tab label="Take Over" />
+          <Tab label="Bridge to ETH" />
         </Tabs>
       </Box>
 
@@ -29,6 +31,9 @@ const RequestDialog: React.FC<RequestDialogProps> = ({ contractId, onClose, open
       </TabPanel>
       <TabPanel value={value} index={1}>
         <TakeOverRequest contractId={contractId} onClose={handleClose} />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <BridgeToEth contractId={contractId} onClose={handleClose} />
       </TabPanel>
     </Dialog>
   )

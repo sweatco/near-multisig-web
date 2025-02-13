@@ -27,3 +27,7 @@ export const MainNet: NetworkConfig = {
 }
 
 export const DefaultNet = process.env.NODE_ENV === 'production' ? MainNet : TestNet
+
+export const isMainNet = function () {
+  return DefaultNet.networkId === 'mainnet'
+}
