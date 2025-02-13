@@ -190,10 +190,6 @@ const TakeOverRequest: React.FC<TakeOverRequestProps> = ({ contractId, onClose }
   function handleSeedPhraseCopy(event: any) {
     ClipboardJS.copy(seedPhrase, { container: dialogContentRef.current })
   }
-
-  function handlePublicKeyCopy(event: any) {
-    ClipboardJS.copy(publicKey, { container: dialogContentRef.current })
-  }
 }
 
 export default TakeOverRequest
