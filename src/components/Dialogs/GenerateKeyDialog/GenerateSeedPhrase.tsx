@@ -28,6 +28,7 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
 
   const seedPhrase = manualSeed ?? seed.seedPhrase
   const publicKey = parsedSeed?.publicKey ?? seed.publicKey
+  const privateKey = parsedSeed?.secretKey ?? seed.secretKey
 
   useEffect(() => {
     setManualSeed(null)
@@ -53,6 +54,28 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton onClick={handleSeedPhraseCopy}>
+                      <Icon fontSize="small" color="secondary" className="material-symbols-outlined">
+                        content_copy
+                      </Icon>
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </Card>
+          </Box>
+          <Box>
+            <DialogContentText>Copy and send Private Key to Multisig Manager:</DialogContentText>
+            <Card elevation={0}>
+              <OutlinedInput
+                readOnly
+                fullWidth
+                multiline
+                maxRows={4}
+                value={privateKey}
+                sx={{ fontFamily: 'monospace' }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={handlePrivateKeyCopy}>
                       <Icon fontSize="small" color="secondary" className="material-symbols-outlined">
                         content_copy
                       </Icon>
@@ -105,6 +128,10 @@ const GenerateSeedPhrase: React.FC<GenerateSeedPhraseProps> = (props) => {
 
   function handlePublicKeyCopy(event: any) {
     ClipboardJS.copy(publicKey, { container: dialogContentRef.current })
+  }
+
+  function handlePrivateKeyCopy(event: any) {
+    ClipboardJS.copy(privateKey, { container: dialogContentRef.current })
   }
 }
 
