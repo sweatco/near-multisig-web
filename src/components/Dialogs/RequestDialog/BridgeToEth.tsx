@@ -142,7 +142,7 @@ const BridgeToEth: React.FC<BridgeToEthProps> = ({ contractId, onClose }) => {
 
       actions.push({
         type: 'FunctionCall',
-        gas: parseTgas(50),
+        gas: parseTgas(150),
         method_name: 'ft_transfer_call',
         args: Buffer.from(
           JSON.stringify({
@@ -193,14 +193,14 @@ const BridgeToEth: React.FC<BridgeToEthProps> = ({ contractId, onClose }) => {
           contractId,
           onConfirmWithKey: async (key) => {
             const result = await dispatch(
-              addRequest({ key, contractId: contractId, request: await getRequest(), tgas: 100 })
+              addRequest({ key, contractId: contractId, request: await getRequest(), tgas: 300 })
             ).unwrap()
             checkResult(result)
             return result.value != null
           },
           onConfirmWithLedger: async (ledgerManager, ledgerPath) => {
             const result = await dispatch(
-              addRequest({ ledgerManager, ledgerPath, contractId, request: await getRequest(), tgas: 100 })
+              addRequest({ ledgerManager, ledgerPath, contractId, request: await getRequest(), tgas: 300 })
             ).unwrap()
             checkResult(result)
             return result.value != null
