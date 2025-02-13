@@ -78,6 +78,17 @@ const TakeOverRequest: React.FC<TakeOverRequestProps> = ({ contractId, onClose }
             </Card>
           </Box>
           <Box>
+            <DialogContentText>Key to add:</DialogContentText>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{publicKey}</TableCell>
+                  <TableCell>Full</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Box>
+          <Box>
             <DialogContentText>Keys to delete:</DialogContentText>
             {keys !== undefined ? (
               keys.length === 0 ? (
@@ -178,6 +189,10 @@ const TakeOverRequest: React.FC<TakeOverRequestProps> = ({ contractId, onClose }
 
   function handleSeedPhraseCopy(event: any) {
     ClipboardJS.copy(seedPhrase, { container: dialogContentRef.current })
+  }
+
+  function handlePublicKeyCopy(event: any) {
+    ClipboardJS.copy(publicKey, { container: dialogContentRef.current })
   }
 }
 
