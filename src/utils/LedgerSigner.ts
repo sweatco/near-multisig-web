@@ -64,11 +64,11 @@ export class LedgerSigner extends Signer {
     // 1. Encode transaction to bytes
     const message = encodeTransaction(transaction)
 
-    // 2. Hash the encoded transaction
-    const hash = new Uint8Array(sha256(message))
+    // 2. Sign the encoded transaction with Ledger (not hashed)
+    const signatureData = await this.ledgerManager.sign(message, this.path)
 
-    // 3. Sign the hash with Ledger
-    const signatureData = await this.ledgerManager.sign(hash, this.path)
+    // 3. Hash the encoded transaction for return value
+    const hash = new Uint8Array(sha256(message))
 
     // 4. Create signature object
     const signature = new Signature({
