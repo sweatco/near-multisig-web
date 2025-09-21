@@ -1,9 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-
-import { DefaultNet } from '../../utils/networks'
 import { RootState } from '../../reducers'
-import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 import { getContract, LockupEntry } from '../../utils/contracts/Lockup'
 
 interface FetchLockupArgs {
@@ -20,8 +17,7 @@ const fetchLockup = createAsyncThunk<
     rejectValue: ErrorObject
   }
 >('chain/fetchLockup', async ({ contractId, lockupId }, { rejectWithValue }) => {
-  const near = await nearAPI.connect(DefaultNet)
-  const account = await near.account(contractId)
+  const account = createAccountWithSigner(contractId)
   const contract = getContract(account, lockupId)
 
   try {

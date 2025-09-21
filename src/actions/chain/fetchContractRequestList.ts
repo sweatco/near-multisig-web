@@ -1,9 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-
-import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/contracts/MultiSig'
-import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 
 const fetchContractRequestList = createAsyncThunk<
   number[],
@@ -12,8 +9,7 @@ const fetchContractRequestList = createAsyncThunk<
     rejectValue: ErrorObject
   }
 >('chain/fetchContractRequestList', async (contractId, { rejectWithValue }) => {
-  const near = await nearAPI.connect(DefaultNet)
-  const account = await near.account(contractId)
+  const account = createAccountWithSigner(contractId)
   const contract = getContract(account, contractId)
 
   try {

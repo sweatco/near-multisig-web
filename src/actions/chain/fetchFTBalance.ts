@@ -1,12 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-
-import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/contracts/FungibleToken'
 import { RootState } from '../../reducers'
 import { ftBalancesSelectors } from '../../reducers/ft_balances'
 import { shallowEqual } from 'react-redux'
-import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 
 export interface FetchFTBalanceArgs {
   tokenId: string
@@ -26,8 +23,7 @@ const fetchFTBalance = createAsyncThunk<
 >(
   'chain/fetchFTBalance',
   async ({ tokenId, accountId }, { rejectWithValue }) => {
-    const near = await nearAPI.connect(DefaultNet)
-    const account = await near.account(tokenId)
+    const account = createAccountWithSigner(tokenId)
     const contract = getContract(account, tokenId)
 
     try {

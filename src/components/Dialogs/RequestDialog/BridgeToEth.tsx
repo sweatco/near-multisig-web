@@ -165,7 +165,6 @@ const BridgeToEth: React.FC<BridgeToEthProps> = ({ contractId, onClose }) => {
         actions: actions,
       }
 
-      console.log('request', request)
 
       return request
     } else {

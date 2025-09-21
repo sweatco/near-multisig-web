@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { NEAR_NOMINATION_EXP } from 'near-api-js/lib/utils/format'
+import { NEAR_NOMINATION_EXP } from '@near-js/utils'
 import { FungibleTokenMetadata } from './contracts/FungibleToken'
 
 export const BN = BigNumber.clone({ DECIMAL_PLACES: 2, ROUNDING_MODE: BigNumber.ROUND_FLOOR })

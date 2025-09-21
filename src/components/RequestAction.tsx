@@ -1,6 +1,6 @@
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Icon } from '@mui/material'
 import React, { useMemo, useState } from 'react'
-import * as nearAPI from 'near-api-js'
+import { formatNearAmount } from '@near-js/utils'
 import { MultiSigRequest } from '../utils/contracts/MultiSig'
 import formatBalance, { BN } from '../utils/formatBalance'
 import useFTMetadata from '../hooks/useFTMetadata'
@@ -29,7 +29,7 @@ const RequestAction: React.FC<RequestActionProps> = ({ contractId, request, acti
   let label = action.type
 
   if (action.type === 'Transfer') {
-    label = `Transfer: ${nearAPI.utils.format.formatNearAmount(action.amount, 2)} NEAR`
+    label = `Transfer: ${formatNearAmount(action.amount, 2)} NEAR`
   } else if (action.type === 'FTTransfer' && metadata) {
     label = `Transfer: ${formatBalance(action.amount, metadata)} ${metadata.symbol}`
   }

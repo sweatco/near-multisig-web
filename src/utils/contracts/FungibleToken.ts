@@ -1,4 +1,4 @@
-import { Account, Contract } from 'near-api-js'
+import { Account, Contract } from '@near-js/accounts'
 
 export interface FungibleTokenMetadata {
   spec: string
@@ -30,6 +30,7 @@ export interface FungibleTokenContract extends Contract {
 const CONTRACT_METHODS = {
   viewMethods: ['ft_balance_of', 'ft_total_supply', 'ft_metadata', 'storage_balance_of'],
   changeMethods: ['ft_transfer'],
+  useLocalViewExecution: false,
 }
 
 export const getContract = (account: Account, contractId: string) => {

@@ -1,9 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-
-import { DefaultNet } from '../../utils/networks'
-import { AccountView } from 'near-api-js/lib/providers/provider'
-import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
+import { AccountView } from '@near-js/types'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 
 const viewAccount = createAsyncThunk<
   AccountView,
@@ -12,8 +9,7 @@ const viewAccount = createAsyncThunk<
     rejectValue: ErrorObject
   }
 >('chain/viewAccount', async (accountId, { rejectWithValue }) => {
-  const near = await nearAPI.connect(DefaultNet)
-  const account = await near.account(accountId)
+  const account = createAccountWithSigner(accountId)
 
   try {
     return await account.state()

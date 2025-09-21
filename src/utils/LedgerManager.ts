@@ -1,7 +1,7 @@
 import { createClient, getSupportedTransport, setDebugLogging } from 'near-ledger-js'
 import { listen } from '@ledgerhq/logs'
-import { PublicKey } from 'near-api-js/lib/utils'
-import { KeyType } from 'near-api-js/lib/utils/key_pair'
+import { PublicKey } from '@near-js/crypto'
+import { KeyType } from '@near-js/crypto'
 
 setDebugLogging(true)
 listen(console.log)
@@ -90,7 +90,7 @@ class LedgerManager {
 
   async getPublicKey(path?: string) {
     await this.connect()
-    const pkData = (await this.client.getPublicKey(path)) as Buffer
+    const pkData = (await this.client.getPublicKey(path)) as any
     return new PublicKey({ keyType: KeyType.ED25519, data: pkData })
   }
 
