@@ -12,7 +12,7 @@ import FungibleTokenChip from '../Chips/FungibleTokenChip'
 import LockupBalance from '../Common/LockupBalance'
 import useConfirmTransaction from './ConfirmTransaction/useConfirmTransaction'
 import useFTStorage from '../../hooks/useFTStorage'
-import { parseNearAmount } from 'near-api-js/lib/utils/format'
+import { parseNearAmount } from '@near-js/utils'
 
 interface FTDialogProps {
   contractId: string

@@ -1,4 +1,4 @@
-import { Account, Contract } from 'near-api-js'
+import { Account, Contract } from '@near-js/accounts'
 
 type RequestId = number
 type Base58PublicKey = string
@@ -36,6 +36,7 @@ const CONTRACT_METHODS = {
     'get_request_nonce',
   ],
   changeMethods: ['add_request', 'add_request_and_confirm', 'delete_request', 'confirm'],
+  useLocalViewExecution: false,
 }
 
 export const getContract = (account: Account, contractId: string) => {

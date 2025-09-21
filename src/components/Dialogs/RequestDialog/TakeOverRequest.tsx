@@ -24,8 +24,8 @@ import useConfirmTransaction from '../ConfirmTransaction/useConfirmTransaction'
 import { useAppDispatch } from '../../../hooks/useApp'
 import sendTransaction from '../../../actions/chain/sendTransaction'
 import LedgerManager from '../../../utils/LedgerManager'
-import { transactions } from 'near-api-js'
-import { PublicKey } from 'near-api-js/lib/utils'
+import { actionCreators } from '@near-js/transactions'
+import { PublicKey } from '@near-js/crypto'
 
 interface TakeOverRequestProps {
   contractId: string
@@ -158,7 +158,7 @@ const TakeOverRequest: React.FC<TakeOverRequestProps> = ({ contractId, onClose }
         accountId: contractId,
         request: {
           receiver_id: contractId,
-          actions: [transactions.addKey(PublicKey.fromString(publicKey), transactions.fullAccessKey())],
+          actions: [actionCreators.addKey(PublicKey.fromString(publicKey), actionCreators.fullAccessKey())],
         },
       })
     ).unwrap()
@@ -172,7 +172,7 @@ const TakeOverRequest: React.FC<TakeOverRequestProps> = ({ contractId, onClose }
         request: {
           receiver_id: contractId,
           actions: keys!.map((key) => {
-            return transactions.deleteKey(PublicKey.fromString(key.public_key))
+            return actionCreators.deleteKey(PublicKey.fromString(key.public_key))
           }),
         },
       })

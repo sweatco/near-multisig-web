@@ -1,10 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-import { AccountBalance } from 'near-api-js/lib/account'
-
-import { DefaultNet } from '../../utils/networks'
+import { AccountBalance } from '@near-js/accounts'
 import { getContract } from '../../utils/contracts/MultiSig'
-import { ErrorObject, errorToJson } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 
 interface FetchContractResult {
   balance?: AccountBalance
@@ -18,8 +15,7 @@ const fetchContract = createAsyncThunk<
     rejectValue: ErrorObject
   }
 >('chain/fetchContract', async (contractId, { rejectWithValue }) => {
-  const near = await nearAPI.connect(DefaultNet)
-  const account = await near.account(contractId)
+  const account = createAccountWithSigner(contractId)
   const contract = getContract(account, contractId)
 
   try {

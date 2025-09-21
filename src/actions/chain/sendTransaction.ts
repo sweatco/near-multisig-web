@@ -1,12 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-
-import { DefaultNet } from '../../utils/networks'
 import { MultiSigRequest } from '../../utils/contracts/MultiSig'
-import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 import LedgerManager from '../../utils/LedgerManager'
-import { SignAndSendTransactionOptions } from 'near-api-js/lib/account'
-import { FinalExecutionOutcome, getTransactionLastResult } from 'near-api-js/lib/providers'
+import { SignAndSendTransactionOptions } from '@near-js/accounts'
+import { FinalExecutionOutcome } from '@near-js/types'
+import { getTransactionLastResult } from '@near-js/utils'
 
 interface AddRequestArgs {
   key?: string
@@ -31,10 +29,9 @@ const sendTransaction = createAsyncThunk<
   }
 >('chain/sendTransaction', async ({ key, ledgerManager, ledgerPath, accountId, request }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(accountId, key, ledgerManager, ledgerPath) })
-    const account = await near.account(accountId)
+    const account = createAccountWithSigner(accountId, key, ledgerManager, ledgerPath)
 
-    const rawResult: FinalExecutionOutcome = await (account as any).signAndSendTransaction({
+    const rawResult: FinalExecutionOutcome = await account.signAndSendTransaction({
       receiverId: request.receiver_id,
       actions: request.actions,
       returnError: true,

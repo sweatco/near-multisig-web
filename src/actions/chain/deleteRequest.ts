@@ -1,9 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-
-import { DefaultNet } from '../../utils/networks'
 import { getContract } from '../../utils/contracts/MultiSig'
-import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 import LedgerManager from '../../utils/LedgerManager'
 
 interface DeleteRequestArgs {
@@ -22,8 +19,7 @@ const deleteRequest = createAsyncThunk<
   }
 >('chain/deleteRequest', async ({ key, ledgerManager, ledgerPath, contractId, requestId }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager, ledgerPath) })
-    const account = await near.account(contractId)
+    const account = createAccountWithSigner(contractId, key, ledgerManager, ledgerPath)
     const contract = getContract(account, contractId)
 
     return await contract.delete_request({ request_id: requestId })

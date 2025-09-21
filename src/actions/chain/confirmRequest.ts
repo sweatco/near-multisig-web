@@ -1,12 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-import BN from 'bn.js'
-
-import { DefaultNet } from '../../utils/networks'
-import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 import { parseTgas } from '../../utils/formatBalance'
 import LedgerManager from '../../utils/LedgerManager'
-import { getTransactionLastResult } from 'near-api-js/lib/providers'
+import { getTransactionLastResult } from '@near-js/utils'
 
 interface ConfirmRequestArgs {
   key?: string
@@ -17,7 +13,7 @@ interface ConfirmRequestArgs {
 }
 
 export interface ConfirmRequestResult {
-  value: boolean | string
+  value: string | number | object | null | boolean
   txHash: string
 }
 
@@ -29,14 +25,13 @@ const confirmRequest = createAsyncThunk<
   }
 >('chain/confirmRequest', async ({ key, ledgerManager, ledgerPath, contractId, requestId }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager, ledgerPath) })
-    const account = await near.account(contractId)
+    const account = createAccountWithSigner(contractId, key, ledgerManager, ledgerPath)
 
     const rawResult = await account.functionCall({
       contractId: contractId,
       methodName: 'confirm',
       args: { request_id: requestId },
-      gas: new BN(parseTgas(300)!),
+      gas: BigInt(parseTgas(300)!),
     })
 
     const value = getTransactionLastResult(rawResult)

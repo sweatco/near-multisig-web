@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AccountBalance } from 'near-api-js/lib/account'
+import { AccountBalance } from '@near-js/accounts'
 import addRequest from '../../actions/chain/addRequest'
 import confirmRequest from '../../actions/chain/confirmRequest'
 import deleteRequest from '../../actions/chain/deleteRequest'

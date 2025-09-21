@@ -1,15 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import * as nearAPI from 'near-api-js'
-import BN from 'bn.js'
 
-import { DefaultNet } from '../../utils/networks'
 import { MultiSigRequest } from '../../utils/contracts/MultiSig'
 import { parseTgas } from '../../utils/formatBalance'
-import { ErrorObject, errorToJson, getSigner } from '../../utils/chainHelpers'
+import { ErrorObject, errorToJson, createAccountWithSigner } from '../../utils/chainHelpers'
 import LedgerManager from '../../utils/LedgerManager'
-import { SignAndSendTransactionOptions } from 'near-api-js/lib/account'
-import { transactions } from 'near-api-js'
-import { FinalExecutionOutcome, getTransactionLastResult } from 'near-api-js/lib/providers'
+import { SignAndSendTransactionOptions } from '@near-js/accounts'
+import { actionCreators } from '@near-js/transactions'
+import { FinalExecutionOutcome } from '@near-js/types'
+import { getTransactionLastResult } from '@near-js/utils'
 
 interface AddRequestArgs {
   key?: string
@@ -34,25 +32,34 @@ const addRequest = createAsyncThunk<
   }
 >('chain/addRequest', async ({ key, ledgerManager, ledgerPath, contractId, request, tgas }, { rejectWithValue }) => {
   try {
-    const near = await nearAPI.connect({ ...DefaultNet, ...getSigner(contractId, key, ledgerManager, ledgerPath) })
-    const account = await near.account(contractId)
+    const account = createAccountWithSigner(contractId, key, ledgerManager, ledgerPath)
 
-    const accessKeyInfo = await account.findAccessKey(contractId, [])
+    const accessKeys = await account.getAccessKeys()
+    const accessKeyInfo = accessKeys.find(ak => {
+      if (ak.access_key.permission === 'FullAccess') {
+        return true
+      }
+      // Check if it's a function call permission
+      if (typeof ak.access_key.permission === 'object' && ak.access_key.permission.FunctionCall) {
+        return ak.access_key.permission.FunctionCall.receiver_id === contractId
+      }
+      return false
+    })
 
-    if (accessKeyInfo?.accessKey.permission === 'FullAccess') {
-      const rawResult: FinalExecutionOutcome = await (account as any).signAndSendTransaction({
+    if (accessKeyInfo?.access_key.permission === 'FullAccess') {
+      const rawResult: FinalExecutionOutcome = await account.signAndSendTransaction({
         receiverId: request.receiver_id,
         actions: request.actions.map((action) => {
           switch (action.type) {
             case 'FunctionCall':
-              return transactions.functionCall(
+              return actionCreators.functionCall(
                 action.method_name,
                 Buffer.from(action.args, 'base64'),
-                new BN(action.gas),
-                new BN(action.deposit)
+                BigInt(action.gas),
+                BigInt(action.deposit)
               )
             case 'Transfer':
-              return transactions.transfer(new BN(action.amount))
+              return actionCreators.transfer(BigInt(action.amount))
           }
 
           return null
@@ -67,11 +74,12 @@ const addRequest = createAsyncThunk<
     } else {
       const rawResult = await account.functionCall({
         contractId: contractId,
-        methodName: accessKeyInfo?.accessKey.permission.FunctionCall.method_names?.includes('add_request_and_confirm')
+        methodName: (typeof accessKeyInfo?.access_key.permission === 'object' &&
+                    accessKeyInfo.access_key.permission.FunctionCall?.method_names?.includes('add_request_and_confirm'))
           ? 'add_request_and_confirm'
           : 'add_request',
         args: { request: request },
-        gas: tgas ? new BN(parseTgas(300)!) : undefined,
+        gas: tgas ? BigInt(parseTgas(300)!) : undefined,
       })
 
       const value = getTransactionLastResult(rawResult)

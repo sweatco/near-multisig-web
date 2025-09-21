@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useAppDispatch } from './useApp'
 import fetchAccountKeys from '../actions/chain/fetchAccountKeys'
 import { isFulfilled } from '@reduxjs/toolkit'
-import { AccessKeyInfoView } from 'near-api-js/lib/providers/provider'
+import { AccessKeyInfoView } from '@near-js/types'
 
 const isFulfilledAction = isFulfilled(fetchAccountKeys)
 

@@ -1,4 +1,4 @@
-import { Account, Contract } from 'near-api-js'
+import { Account, Contract } from '@near-js/accounts'
 
 export interface LockupSchedule {
   timestamp: number
@@ -26,6 +26,7 @@ export interface LockupContract extends Contract {
 const CONTRACT_METHODS = {
   viewMethods: ['get_account_lockups'],
   changeMethods: ['claim'], // change methods modify state
+  useLocalViewExecution: false,
 }
 
 export const getContract = (account: Account, contractId: string) => {
