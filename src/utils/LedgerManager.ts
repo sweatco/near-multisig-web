@@ -90,7 +90,7 @@ class LedgerManager {
 
   async getPublicKey(path?: string) {
     await this.connect()
-    const pkData = (await this.client.getPublicKey(path)) as Buffer
+    const pkData = (await this.client.getPublicKey(path)) as any
     return new PublicKey({ keyType: KeyType.ED25519, data: pkData })
   }
 

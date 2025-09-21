@@ -27,7 +27,7 @@ export class LedgerSigner extends Signer {
 
   async signMessage(message: Uint8Array, accountId?: string, networkId?: string): Promise<Signature> {
     const publicKey = await this.getPublicKey(accountId, networkId)
-    const signature = await this.ledgerManager.sign(message, this.path)
+    const signature = (await this.ledgerManager.sign(message, this.path)) as any
     return { signature, publicKey }
   }
 
@@ -36,7 +36,13 @@ export class LedgerSigner extends Signer {
     throw new Error('Delegate actions are not supported with Ledger signer')
   }
 
-  async signNep413Message(_message: string, _accountId: string, _recipient: string, _nonce: Uint8Array, _callbackUrl?: string): Promise<any> {
+  async signNep413Message(
+    _message: string,
+    _accountId: string,
+    _recipient: string,
+    _nonce: Uint8Array,
+    _callbackUrl?: string
+  ): Promise<any> {
     // For now, NEP-413 messages are not supported on Ledger
     throw new Error('NEP-413 messages are not supported with Ledger signer')
   }
