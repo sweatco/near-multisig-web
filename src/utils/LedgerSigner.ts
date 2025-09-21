@@ -1,5 +1,7 @@
 import { Signer } from '@near-js/signers'
-import { PublicKey, KeyPair, Signature } from '@near-js/crypto'
+import { PublicKey, KeyPair, KeyType } from '@near-js/crypto'
+import { encodeTransaction, SignedTransaction, Signature } from '@near-js/transactions'
+import { sha256 } from '@noble/hashes/sha256'
 import LedgerManager from './LedgerManager'
 
 export class LedgerSigner extends Signer {
@@ -26,9 +28,13 @@ export class LedgerSigner extends Signer {
   }
 
   async signMessage(message: Uint8Array, accountId?: string, networkId?: string): Promise<Signature> {
-    const publicKey = await this.getPublicKey(accountId, networkId)
-    const signature = (await this.ledgerManager.sign(message, this.path)) as any
-    return { signature, publicKey }
+    await this.getPublicKey(accountId, networkId)
+    const signatureData = await this.ledgerManager.sign(message, this.path)
+
+    return new Signature({
+      keyType: KeyType.ED25519,
+      data: signatureData
+    })
   }
 
   async signDelegateAction(_delegateAction: any): Promise<[Uint8Array, any]> {
@@ -47,9 +53,36 @@ export class LedgerSigner extends Signer {
     throw new Error('NEP-413 messages are not supported with Ledger signer')
   }
 
-  async signTransaction(_transaction: any): Promise<[Uint8Array, any]> {
-    // For now, direct transaction signing is not supported on Ledger in this implementation
-    throw new Error('Direct transaction signing is not supported with this Ledger signer implementation')
+  async signTransaction(transaction: any): Promise<[Uint8Array, SignedTransaction]> {
+    const publicKey = await this.getPublicKey()
+
+    // Validate public key matches
+    if (transaction.publicKey.toString() !== publicKey.toString()) {
+      throw new Error("The public key doesn't match the signer's key")
+    }
+
+    // 1. Encode transaction to bytes
+    const message = encodeTransaction(transaction)
+
+    // 2. Hash the encoded transaction
+    const hash = new Uint8Array(sha256(message))
+
+    // 3. Sign the hash with Ledger
+    const signatureData = await this.ledgerManager.sign(hash, this.path)
+
+    // 4. Create signature object
+    const signature = new Signature({
+      keyType: KeyType.ED25519,
+      data: signatureData
+    })
+
+    // 5. Create signed transaction
+    const signedTx = new SignedTransaction({
+      transaction,
+      signature
+    })
+
+    return [hash, signedTx]
   }
 
   toString(): string {
