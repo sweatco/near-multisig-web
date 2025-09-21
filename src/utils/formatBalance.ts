@@ -21,7 +21,7 @@ export const parseTgas = (tgas: number) => {
 }
 
 export const toNearBalance = (balance: string | BigNumber) => {
-  return new BN(balance).dividedBy(new BN(10).pow(Number(NEAR_NOMINATION_EXP)))
+  return new BN(balance).dividedBy(new BN(10).pow(NEAR_NOMINATION_EXP))
 }
 
 export const formatNearBalance = (balance: string | BigNumber) => {
