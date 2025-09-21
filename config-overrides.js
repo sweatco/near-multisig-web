@@ -12,6 +12,7 @@ const useFallback = () => (config) => {
     url: require.resolve('url'),
     assert: require.resolve('assert'),
     path: require.resolve('path-browserify'),
+    vm: require.resolve('vm-browserify'),
     fs: false,
     net: false,
     tls: false,

@@ -5,7 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.10.4",
-    "@mui/material": "^5.10.8",
+    "@mui/material": "^5.18.0",
     "@near-js/accounts": "^2.3.1",
     "@near-js/crypto": "^2.3.1",
     "@near-js/keystores": "^2.3.1",
@@ -14,15 +14,15 @@
     "@near-js/transactions": "^2.3.1",
     "@near-js/types": "^2.3.1",
     "@near-js/utils": "^2.3.1",
-    "@reduxjs/toolkit": "^1.8.2",
-    "@testing-library/jest-dom": "^5.16.4",
+    "@reduxjs/toolkit": "^1.9.7",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/bn.js": "^5.1.1",
-    "@types/jest": "^29.1.2",
-    "@types/node": "^16.11.38",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.5",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.19.17",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
     "@types/react-router-dom": "^5.3.3",
     "bignumber.js": "^9.1.0",
     "buffer": "^6.0.3",
@@ -33,16 +33,16 @@
     "near-api-js": "^6.3.0",
     "near-ledger-js": "^0.2.1",
     "near-seed-phrase": "^0.2.0",
-    "notistack": "^2.0.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.1.0",
-    "react-redux": "^8.0.4",
-    "react-router-dom": "^6.4.2",
+    "notistack": "^3.0.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^8.1.3",
+    "react-router-dom": "^6.30.1",
     "react-scripts": "5.0.1",
     "redux-persist": "^6.0.0",
     "stream-browserify": "^3.0.0",
-    "typescript": "^4.8.4",
-    "web-vitals": "^3.0.3"
+    "typescript": "^4.9.5",
+    "web-vitals": "^3.5.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -78,6 +78,7 @@
     "react-app-rewire-emotion": "^4.0.0",
     "react-app-rewired": "^2.2.1",
     "url": "^0.11.4",
-    "util": "^0.12.5"
+    "util": "^0.12.5",
+    "vm-browserify": "^1.1.2"
   }
 }

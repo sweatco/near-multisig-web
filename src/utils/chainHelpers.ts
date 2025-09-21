@@ -17,7 +17,7 @@ export function createSignerFromKey(key: string) {
   if (key.split(' ').length > 1) {
     // Seed Phrase
     const { secretKey } = parseSeedPhrase(key)
-    return KeyPairSigner.fromSecretKey(secretKey)
+    return KeyPairSigner.fromSecretKey(secretKey as KeyPairString)
   } else {
     // Private Key - needs proper KeyPairString type
     return KeyPairSigner.fromSecretKey(key as KeyPairString)
