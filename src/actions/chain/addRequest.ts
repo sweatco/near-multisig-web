@@ -34,19 +34,13 @@ const addRequest = createAsyncThunk<
   try {
     const account = createAccountWithSigner(contractId, key, ledgerManager, ledgerPath)
 
-    const accessKeys = await account.getAccessKeys()
-    const accessKeyInfo = accessKeys.find(ak => {
-      if (ak.access_key.permission === 'FullAccess') {
-        return true
-      }
-      // Check if it's a function call permission
-      if (typeof ak.access_key.permission === 'object' && ak.access_key.permission.FunctionCall) {
-        return ak.access_key.permission.FunctionCall.receiver_id === contractId
-      }
-      return false
-    })
+    // Get the public key of the signer being used
+    const signerPublicKey = await account.getSigner()!.getPublicKey()
 
-    if (accessKeyInfo?.access_key.permission === 'FullAccess') {
+    // Get access key info for the specific key that will be used for signing
+    const accessKeyInfo = await account.getAccessKey(signerPublicKey)
+
+    if (accessKeyInfo?.permission === 'FullAccess') {
       const rawResult: FinalExecutionOutcome = await account.signAndSendTransaction({
         receiverId: request.receiver_id,
         actions: request.actions.map((action) => {
@@ -74,10 +68,11 @@ const addRequest = createAsyncThunk<
     } else {
       const rawResult = await account.functionCall({
         contractId: contractId,
-        methodName: (typeof accessKeyInfo?.access_key.permission === 'object' &&
-                    accessKeyInfo.access_key.permission.FunctionCall?.method_names?.includes('add_request_and_confirm'))
-          ? 'add_request_and_confirm'
-          : 'add_request',
+        methodName:
+          typeof accessKeyInfo?.permission === 'object' &&
+          accessKeyInfo.permission.FunctionCall?.method_names?.includes('add_request_and_confirm')
+            ? 'add_request_and_confirm'
+            : 'add_request',
         args: { request: request },
         gas: tgas ? BigInt(parseTgas(300)!) : undefined,
       })
